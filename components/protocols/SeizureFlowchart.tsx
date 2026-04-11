@@ -62,11 +62,10 @@ interface BoxProps {
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
 }
 
-// alignmentBaseline="middle" makes y the visual centre of the glyph,
-// so no baseline-offset constant is needed.
 function Box({ x, y, w, h, fill, stroke, rx = 8, lines, textColor, fontSize = 14, badge, badgeColor, badgeBg, badgeBorder }: BoxProps) {
   const lh = fontSize * 1.5;
-  const startY = y + h / 2 - (lines.length - 1) * lh / 2;
+  const totalTextH = (lines.length - 1) * lh;
+  const firstLineY = y + h / 2 - totalTextH / 2 + fontSize;
   return (
     <G>
       <Rect x={x} y={y} width={w} height={h} fill={fill} stroke={stroke} strokeWidth={1.5} rx={rx} />
@@ -74,9 +73,8 @@ function Box({ x, y, w, h, fill, stroke, rx = 8, lines, textColor, fontSize = 14
         <SvgText
           key={i}
           x={x + w / 2}
-          y={startY + i * lh}
+          y={firstLineY + i * lh}
           textAnchor="middle"
-          alignmentBaseline="middle"
           fontSize={fontSize}
           fill={textColor}
           fontWeight="500"
@@ -87,7 +85,7 @@ function Box({ x, y, w, h, fill, stroke, rx = 8, lines, textColor, fontSize = 14
       {badge && (
         <>
           <Rect x={x + w - 72} y={y + 7} width={66} height={19} fill={badgeBg ?? '#161b22'} stroke={badgeBorder ?? '#484f58'} strokeWidth={1} rx={4} />
-          <SvgText x={x + w - 39} y={y + 16} textAnchor="middle" alignmentBaseline="middle" fontSize={10} fill={badgeColor ?? '#8b949e'} fontWeight="700">
+          <SvgText x={x + w - 39} y={y + 16} textAnchor="middle" fontSize={10} fill={badgeColor ?? '#8b949e'} fontWeight="700">
             {badge}
           </SvgText>
         </>
@@ -123,7 +121,7 @@ function StepBox({ x, y, w, h, fill, stroke, stepNum, title, subtitle, titleColo
       {badge && (
         <>
           <Rect x={x + w - 112} y={y + 8} width={104} height={19} fill={badgeBg ?? '#161b22'} stroke={badgeBorder ?? '#484f58'} strokeWidth={1} rx={4} />
-          <SvgText x={x + w - 60} y={y + 17} textAnchor="middle" alignmentBaseline="middle" fontSize={10} fill={badgeColor ?? '#8b949e'} fontWeight="700">
+          <SvgText x={x + w - 60} y={y + 17} textAnchor="middle" fontSize={10} fill={badgeColor ?? '#8b949e'} fontWeight="700">
             {badge}
           </SvgText>
         </>
@@ -137,12 +135,13 @@ function Diamond({ cx: dcx, cy: dcy, w, h, fill, stroke, lines, textColor, fontS
   const hw = w / 2; const hh = h / 2;
   const pts = `${dcx},${dcy - hh} ${dcx + hw},${dcy} ${dcx},${dcy + hh} ${dcx - hw},${dcy}`;
   const lh = fontSize * 1.5;
-  const startY = dcy - (lines.length - 1) * lh / 2;
+  const totalTextH = (lines.length - 1) * lh;
+  const firstLineY = dcy - totalTextH / 2 + fontSize;
   return (
     <G>
       <Polygon points={pts} fill={fill} stroke={stroke} strokeWidth={1.5} />
       {lines.map((l, i) => (
-        <SvgText key={i} x={dcx} y={startY + i * lh} textAnchor="middle" alignmentBaseline="middle" fontSize={fontSize} fill={textColor} fontWeight="700">
+        <SvgText key={i} x={dcx} y={firstLineY + i * lh} textAnchor="middle" fontSize={fontSize} fill={textColor} fontWeight="700">
           {l}
         </SvgText>
       ))}
