@@ -65,7 +65,8 @@ interface BoxProps {
 function Box({ x, y, w, h, fill, stroke, rx = 8, lines, textColor, fontSize = 14, badge, badgeColor, badgeBg, badgeBorder }: BoxProps) {
   const lh = fontSize * 1.5;
   const totalTextH = (lines.length - 1) * lh;
-  const firstLineY = y + h / 2 - totalTextH / 2 + fontSize;
+  // y= is the baseline in react-native-svg; cap-height sits ~35% of fontSize above baseline
+  const firstLineY = y + h / 2 - totalTextH / 2 + fontSize * 0.35;
   return (
     <G>
       <Rect x={x} y={y} width={w} height={h} fill={fill} stroke={stroke} strokeWidth={1.5} rx={rx} />
@@ -104,17 +105,37 @@ interface StepBoxProps {
 }
 
 function StepBox({ x, y, w, h, fill, stroke, stepNum, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder }: StepBoxProps) {
+  // Row font sizes
+  const fsLabel = 10;
+  const fsTitle = 14;
+  const fsSub = 12;
+  const gap = 4; // px between rows
+  const rowCount = subtitle ? 3 : 2;
+  const rowSizes = subtitle ? [fsLabel, fsTitle, fsSub] : [fsLabel, fsTitle];
+  // Total block height = sum of row cap-heights + gaps between rows
+  // Cap-height ≈ fontSize * 0.7
+  const totalBlockH = rowSizes.reduce((s, fs) => s + fs * 0.7, 0) + gap * (rowCount - 1);
+  // Top of block so it's centred in the box
+  const blockTop = y + (h - totalBlockH) / 2;
+  // Baseline of each row = blockTop + cumulative cap-heights + gaps + this row's cap-height
+  let cursor = blockTop;
+  const baselines: number[] = [];
+  rowSizes.forEach((fs) => {
+    cursor += fs * 0.7;
+    baselines.push(cursor);
+    cursor += gap;
+  });
   return (
     <G>
       <Rect x={x} y={y} width={w} height={h} fill={fill} stroke={stroke} strokeWidth={1.5} rx={10} />
-      <SvgText x={x + 16} y={y + 22} fontSize={10} fill={subtitleColor} fontWeight="700" letterSpacing={0.8}>
+      <SvgText x={x + 16} y={baselines[0]} fontSize={fsLabel} fill={subtitleColor} fontWeight="700" letterSpacing={0.8}>
         {`STEP ${stepNum}`}
       </SvgText>
-      <SvgText x={x + 16} y={y + 40} fontSize={14} fill={titleColor} fontWeight="800">
+      <SvgText x={x + 16} y={baselines[1]} fontSize={fsTitle} fill={titleColor} fontWeight="800">
         {title}
       </SvgText>
       {subtitle && (
-        <SvgText x={x + 16} y={y + 58} fontSize={12} fill={subtitleColor} fontWeight="400">
+        <SvgText x={x + 16} y={baselines[2]} fontSize={fsSub} fill={subtitleColor} fontWeight="400">
           {subtitle}
         </SvgText>
       )}
@@ -136,7 +157,7 @@ function Diamond({ cx: dcx, cy: dcy, w, h, fill, stroke, lines, textColor, fontS
   const pts = `${dcx},${dcy - hh} ${dcx + hw},${dcy} ${dcx},${dcy + hh} ${dcx - hw},${dcy}`;
   const lh = fontSize * 1.5;
   const totalTextH = (lines.length - 1) * lh;
-  const firstLineY = dcy - totalTextH / 2 + fontSize;
+  const firstLineY = dcy - totalTextH / 2 + fontSize * 0.35;
   return (
     <G>
       <Polygon points={pts} fill={fill} stroke={stroke} strokeWidth={1.5} />
