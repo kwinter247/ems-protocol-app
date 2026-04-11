@@ -93,9 +93,10 @@ interface BoxProps {
 }
 
 function Box({ x, y, w, h, fill, stroke, rx = 8, lines, textColor, fontSize = 13, badge, badgeColor, badgeBg, badgeBorder }: BoxProps) {
-  const lh = fontSize * 1.55;
-  const totalH = lines.length * lh;
-  const startY = y + h / 2 - totalH / 2 + lh * 0.6;
+  const lh = fontSize * 1.5;
+  // startY = baseline of first line, centered so the visual text block is centred in the box.
+  // fontSize*0.35 ≈ ascent offset (visual centre of a glyph is ~35% below its top, ~35% above baseline).
+  const startY = y + h / 2 - (lines.length - 1) * lh / 2 + fontSize * 0.35;
   return (
     <G>
       <Rect x={x} y={y} width={w} height={h} fill={fill} stroke={stroke} strokeWidth={1.5} rx={rx} />
@@ -434,8 +435,6 @@ export default function SeizureFlowchart() {
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="ALL PROVIDERS" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
-      <Arrow x1={cx} y1={1642} x2={cx} y2={1666} />
-
       {/* ── PREGNANCY NOTE ──────────────────────────────────── */}
       {/* y=1666, h=80 → bottom=1746 */}
       <Box x={BX} y={1666} w={BW} h={80}
@@ -446,8 +445,6 @@ export default function SeizureFlowchart() {
           'If etiology unclear: may give benzo simultaneously with mag',
         ]}
         textColor={C.pregText} fontSize={12} />
-
-      <Arrow x1={cx} y1={1746} x2={cx} y2={1770} />
 
       {/* ── DISCLAIMER ──────────────────────────────────────── */}
       <Rect x={BX} y={1770} width={BW} height={1} fill={C.muted} />
