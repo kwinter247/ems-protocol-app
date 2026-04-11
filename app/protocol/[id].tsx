@@ -11,7 +11,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import SeizureFlowchart from '@/components/protocols/SeizureFlowchart';
-import { GestureDetector, Gesture, ScrollView } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
