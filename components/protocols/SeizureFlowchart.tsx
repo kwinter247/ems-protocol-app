@@ -6,7 +6,7 @@ import Svg, {
   G,
 } from 'react-native-svg';
 
-const W = 720;
+const W = 860;
 const H = 3600;
 const cx = W / 2;
 const BW = 620;
@@ -269,13 +269,13 @@ export default function SeizureFlowchart() {
         fill={C.decBg} stroke={C.decBorder}
         lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
-      {/* YES — left branch */}
-      <Line x1={cx - 190} y1={416} x2={BX - 10} y2={416} stroke={C.arrow} strokeWidth={1.5} />
-      <Arrow x1={BX - 10} y1={416} x2={BX - 10} y2={450} />
-      <SvgText x={cx - 200} y={410} fontSize={11} fill={C.label} fontWeight="700" textAnchor="end">YES</SvgText>
-      <Box x={BX - 148} y={450} w={138} h={52}
+      {/* YES — right branch */}
+      <Line x1={cx + 190} y1={416} x2={cx + 210} y2={416} stroke={C.arrow} strokeWidth={1.5} />
+      <Arrow x1={cx + 210} y1={416} x2={cx + 210} y2={450} />
+      <SvgText x={cx + 218} y={410} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+      <Box x={cx + 200} y={450} w={150} h={52}
         fill={C.destBg} stroke={C.destBorder} rx={8}
-        lines={['Refer to', 'Hypoglycemia protocol']}
+        lines={['→ Hypoglycemia', 'protocol']}
         textColor={C.destText} fontSize={11} />
 
       {/* NO — continues down */}
@@ -299,14 +299,14 @@ export default function SeizureFlowchart() {
         fill={C.decBg} stroke={C.decBorder}
         lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
-      {/* YES — left branch */}
-      <Line x1={cx - 220} y1={654} x2={BX - 10} y2={654} stroke={C.arrow} strokeWidth={1.5} />
-      <Arrow x1={BX - 10} y1={654} x2={BX - 10} y2={688} />
-      <SvgText x={cx - 228} y={648} fontSize={11} fill={C.label} fontWeight="700" textAnchor="end">YES</SvgText>
-      <Box x={BX - 158} y={688} w={148} h={80}
+      {/* YES — right branch */}
+      <Line x1={cx + 220} y1={654} x2={cx + 238} y2={654} stroke={C.arrow} strokeWidth={1.5} />
+      <Arrow x1={cx + 238} y1={654} x2={cx + 238} y2={688} />
+      <SvgText x={cx + 246} y={648} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+      <Box x={cx + 228} y={688} w={152} h={80}
         fill={C.destBg} stroke={C.destBorder} rx={8}
-        lines={['Mag Sulfate', '4 g IV/IO', 'over 20 min slow push', '→ OB protocol']}
-        textColor={C.destText} fontSize={11} />
+        lines={['Mag Sulfate', '4 g IV/IO', '20 min slow push', '→ OB protocol']}
+        textColor={C.destText} fontSize={10} />
 
       {/* NO — continues down */}
       <Arrow x1={cx} y1={714} x2={cx} y2={740} label="NO" />
@@ -398,11 +398,11 @@ export default function SeizureFlowchart() {
         fill={C.decBg} stroke={C.decBorder}
         lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
-      {/* NO — left branch → Medical Direction */}
-      <Line x1={cx - 190} y1={1370} x2={BX - 10} y2={1370} stroke={C.arrow} strokeWidth={1.5} />
-      <Arrow x1={BX - 10} y1={1370} x2={BX - 10} y2={1404} />
-      <SvgText x={cx - 198} y={1364} fontSize={11} fill={C.label} fontWeight="700" textAnchor="end">NO</SvgText>
-      <Box x={BX - 148} y={1404} w={138} h={42}
+      {/* NO — right branch → Medical Direction */}
+      <Line x1={cx + 190} y1={1370} x2={cx + 210} y2={1370} stroke={C.arrow} strokeWidth={1.5} />
+      <Arrow x1={cx + 210} y1={1370} x2={cx + 210} y2={1404} />
+      <SvgText x={cx + 218} y={1364} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
+      <Box x={cx + 200} y={1404} w={150} h={42}
         fill={C.destBg} stroke={C.destBorder} rx={8}
         lines={['Medical Direction']}
         textColor={C.destText} fontSize={11} />
