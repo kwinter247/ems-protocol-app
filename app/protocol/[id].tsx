@@ -19,7 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const FLOWCHART_W = 860;
-const FLOWCHART_H = 3600;
+const FLOWCHART_H = 3800;
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 3.0;
 const ZOOM_STEP = 0.25;
@@ -32,7 +32,7 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
 };
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const INITIAL_SCALE = Math.min(1, (SCREEN_W - 0) / FLOWCHART_W);
+const INITIAL_SCALE = (SCREEN_W) / FLOWCHART_W;
 
 export default function ProtocolViewer() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -69,9 +69,9 @@ export default function ProtocolViewer() {
 
   const animStyle = useAnimatedStyle(() => ({
     transform: [
+      { scale: scale.value },
       { translateX: translateX.value },
       { translateY: translateY.value },
-      { scale: scale.value },
     ],
   }));
 
