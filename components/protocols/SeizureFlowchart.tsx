@@ -128,13 +128,14 @@ function Arrow({ x1, y1, x2, y2, label, labelSide = 'right' }: { x1: number; y1:
   const ax2 = x2 - ux * 10 + uy * 5;
   const ay2 = y2 - uy * 10 - ux * 5;
   const mx = (x1 + x2) / 2; const my = (y1 + y2) / 2;
-  const off = labelSide === 'left' ? -8 : 8;
+  const offX = labelSide === 'left' ? -8 : 0;
+  const offY = labelSide === 'left' ? 4 : -8;
   return (
     <G>
       <Line x1={x1} y1={y1} x2={x2} y2={y2} stroke={C.arrow} strokeWidth={1.5} />
       <Polygon points={`${x2},${y2} ${ax1},${ay1} ${ax2},${ay2}`} fill={C.arrow} />
       {label && (
-        <SvgText x={mx + off} y={my + 4} fontSize={11} fill={C.label} fontWeight="700" textAnchor={labelSide === 'left' ? 'end' : 'start'}>
+        <SvgText x={mx + offX} y={my + offY} fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle">
           {label}
         </SvgText>
       )}
