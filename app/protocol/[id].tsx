@@ -51,8 +51,8 @@ export default function ProtocolViewer() {
 
   useEffect(() => {
     const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
-    translateX.value = -offset;
-    savedX.value = -offset;
+    translateX.value = -offset + (SCREEN_W * (1 - INITIAL_SCALE)) / 2;
+    savedX.value = translateX.value;
   }, []);
 
   const pinchGesture = Gesture.Pinch()
@@ -98,11 +98,12 @@ export default function ProtocolViewer() {
 
   const resetZoom = () => {
     const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
+    const tx = -offset + (SCREEN_W * (1 - INITIAL_SCALE)) / 2;
     scale.value = withTiming(INITIAL_SCALE, { duration: 250 });
     savedScale.value = INITIAL_SCALE;
-    translateX.value = withTiming(-offset, { duration: 250 });
+    translateX.value = withTiming(tx, { duration: 250 });
     translateY.value = withTiming(0, { duration: 250 });
-    savedX.value = -offset;
+    savedX.value = tx;
     savedY.value = 0;
   };
 
