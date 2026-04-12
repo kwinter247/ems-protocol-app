@@ -19,7 +19,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const FLOWCHART_W = 640;
+const FLOWCHART_W = 540;
 const FLOWCHART_H = 3800;
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 3.0;

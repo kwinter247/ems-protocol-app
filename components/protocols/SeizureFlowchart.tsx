@@ -7,15 +7,15 @@ import Svg, {
   G,
 } from 'react-native-svg';
 
-const W = 640;
+const W = 540;
 const H = 3800;
-const cx = W / 2;         // 320
-const BW = 440;
-const BX = cx - BW / 2;   // 100
-const BR = BX + BW;        // 540  right edge of main boxes
-const CBX = BR + 6;        // 546  callout box left edge
-const CBW = 98;            //      callout box width (right edge 644)
-const DW = 300;            //      diamond width (right point = cx+DW/2 = 470)
+const cx = W / 2;         // 270
+const BW = 390;
+const BX = cx - BW / 2;   // 75
+const BR = BX + BW;        // 465  right edge of main boxes
+const CBX = BR + 8;        // 473  callout box left edge
+const CBW = 110;           //      callout box width (right edge 583)
+const DW = 240;            //      diamond width (right point = cx+DW/2 = 390)
 const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
