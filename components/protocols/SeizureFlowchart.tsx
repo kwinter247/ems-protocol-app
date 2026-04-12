@@ -129,7 +129,7 @@ function Arrow({ x1, y1, x2, y2, label, labelSide = 'right' }: { x1: number; y1:
   const ay2 = y2 - uy * 10 - ux * 5;
   const mx = (x1 + x2) / 2; const my = (y1 + y2) / 2;
   const offX = labelSide === 'left' ? -8 : 0;
-  const offY = labelSide === 'left' ? 4 : -8;
+  const offY = -10;
   return (
     <G>
       <Line x1={x1} y1={y1} x2={x2} y2={y2} stroke={C.arrow} strokeWidth={1.5} />

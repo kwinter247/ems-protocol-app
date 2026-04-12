@@ -19,7 +19,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const FLOWCHART_W = 540;
 const FLOWCHART_H = 3800;
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 3.0;
@@ -33,6 +32,7 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
 };
 
 const { width: SCREEN_W } = Dimensions.get('window');
+const FLOWCHART_W = SCREEN_W;
 const INITIAL_SCALE = (SCREEN_W) / FLOWCHART_W;
 
 export default function ProtocolViewer() {
@@ -50,9 +50,8 @@ export default function ProtocolViewer() {
   const originY = useSharedValue(0);
 
   useEffect(() => {
-    const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
-    translateX.value = -offset + (SCREEN_W * (1 - INITIAL_SCALE)) / 2;
-    savedX.value = translateX.value;
+    translateX.value = 0;
+    savedX.value = 0;
   }, []);
 
   const pinchGesture = Gesture.Pinch()
@@ -97,13 +96,11 @@ export default function ProtocolViewer() {
   };
 
   const resetZoom = () => {
-    const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
-    const tx = -offset + (SCREEN_W * (1 - INITIAL_SCALE)) / 2;
     scale.value = withTiming(INITIAL_SCALE, { duration: 250 });
     savedScale.value = INITIAL_SCALE;
-    translateX.value = withTiming(tx, { duration: 250 });
+    translateX.value = withTiming(0, { duration: 250 });
     translateY.value = withTiming(0, { duration: 250 });
-    savedX.value = tx;
+    savedX.value = 0;
     savedY.value = 0;
   };
 
