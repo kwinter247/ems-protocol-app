@@ -15,8 +15,8 @@ const BX = cx - BW / 2;        // 75
 const BR = BX + BW;             // 465  right edge of main boxes
 const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
-const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
 const CBW = 110;                //      callout box width
+const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
 const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
