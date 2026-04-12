@@ -192,15 +192,15 @@ interface StepBoxLabelProps {
 function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder }: StepBoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
-      <View style={[styles.stepCenter, { paddingRight: badge ? 120 : 16 }]}>
-        <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3 }}>
+      <View style={[styles.stepCenter, { paddingHorizontal: badge ? 120 : 20 }]}>
+        <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3, textAlign: 'center' }}>
           {stepLabel}
         </Text>
-        <Text style={{ color: titleColor, fontSize: 16, fontWeight: '800' }}>
+        <Text style={{ color: titleColor, fontSize: 17, fontWeight: '800', textAlign: 'center' }}>
           {title}
         </Text>
         {subtitle && (
-          <Text style={{ color: subtitleColor, fontSize: 13, fontWeight: '400', marginTop: 3 }}>
+          <Text style={{ color: subtitleColor, fontSize: 14, fontWeight: '400', marginTop: 3, textAlign: 'center' }}>
             {subtitle}
           </Text>
         )}
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   stepCenter: {
     flex: 1,
     justifyContent: 'center',
-    paddingLeft: 16,
+    alignItems: 'center',
   },
   badgeAbs: {
     position: 'absolute',
