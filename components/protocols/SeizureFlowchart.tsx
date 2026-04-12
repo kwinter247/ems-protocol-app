@@ -7,12 +7,16 @@ import Svg, {
   G,
 } from 'react-native-svg';
 
-const W = 860;
+const W = 700;
 const H = 3800;
-const cx = W / 2;
-const BW = 560;
-const BX = cx - BW / 2;
-const STEP_H = 100; // was 72
+const cx = W / 2;         // 350
+const BW = 480;
+const BX = cx - BW / 2;   // 110
+const BR = BX + BW;        // 590  right edge of main boxes
+const CBX = BR + 6;        // 596  callout box left edge
+const CBW = 98;            //      callout box width (right edge 694)
+const DW = BW;             // 480  diamond width matches box width
+const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -293,15 +297,15 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_STEP2 + STEP_H} x2={cx} y2={Y_DIA1 - DIA1_H / 2} />
 
         {/* Diamond: BGL < 60? */}
-        <Diamond cx={cx} cy={Y_DIA1} w={380} h={DIA1_H}
+        <Diamond cx={cx} cy={Y_DIA1} w={DW} h={DIA1_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + 190} y1={Y_DIA1} x2={720} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={Y_DIA1} x2={720} y2={Y_HYPO_BOX} />
-        <SvgText x={724} y={Y_DIA1 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={Y_HYPO_BOX} w={140} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={BR} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={CBX + CBW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_HYPO_BOX} />
+        <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA1 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
         <Arrow x1={cx} y1={Y_DIA1 + DIA1_H / 2} x2={cx} y2={Y_STEP3} label="NO" />
@@ -313,15 +317,15 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_STEP3 + STEP_H} x2={cx} y2={Y_DIA2 - DIA2_H / 2} />
 
         {/* Diamond: Pregnant? */}
-        <Diamond cx={cx} cy={Y_DIA2} w={440} h={DIA2_H}
+        <Diamond cx={cx} cy={Y_DIA2} w={DW} h={DIA2_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
         {/* YES branch */}
-        <Line x1={cx + 220} y1={Y_DIA2} x2={720} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={Y_DIA2} x2={720} y2={Y_MAG_BOX} />
-        <SvgText x={724} y={Y_DIA2 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={Y_MAG_BOX} w={140} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={BR} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={CBX + CBW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_MAG_BOX} />
+        <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA2 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
         <Arrow x1={cx} y1={Y_DIA2 + DIA2_H / 2} x2={cx} y2={Y_SECHDR} label="NO" />
@@ -365,15 +369,15 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_BENZOBOTTOM} x2={cx} y2={Y_DIA3 - DIA3_H / 2} />
 
         {/* Diamond: Seizure stopped? (1) */}
-        <Diamond cx={cx} cy={Y_DIA3} w={380} h={DIA3_H}
+        <Diamond cx={cx} cy={Y_DIA3} w={DW} h={DIA3_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + 190} y1={Y_DIA3} x2={720} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={Y_DIA3} x2={720} y2={Y_POSTICTAL_BOX} />
-        <SvgText x={724} y={Y_DIA3 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={Y_POSTICTAL_BOX} w={140} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
+        <Line x1={BR} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={CBX + CBW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_POSTICTAL_BOX} />
+        <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA3 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
 
         {/* NO branch */}
         <Arrow x1={cx} y1={Y_DIA3 + DIA3_H / 2} x2={cx} y2={Y_STEP5} label="NO" labelSide="right" />
@@ -385,15 +389,15 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_STEP5 + STEP_H} x2={cx} y2={Y_DIA4 - DIA4_H / 2} />
 
         {/* Diamond: Seizure stopped? (2) */}
-        <Diamond cx={cx} cy={Y_DIA4} w={380} h={DIA4_H}
+        <Diamond cx={cx} cy={Y_DIA4} w={DW} h={DIA4_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* NO branch */}
-        <Line x1={cx + 190} y1={Y_DIA4} x2={720} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={Y_DIA4} x2={720} y2={Y_MEDDIR_BOX} />
-        <SvgText x={724} y={Y_DIA4 - 4} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
-        <Box x={712} y={Y_MEDDIR_BOX} w={140} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={BR} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={CBX + CBW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_MEDDIR_BOX} />
+        <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA4 - 4} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
+        <Box x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* YES branch */}
         <Arrow x1={cx} y1={Y_DIA4 + DIA4_H / 2} x2={cx} y2={Y_STEP6} label="YES" />
@@ -447,7 +451,7 @@ export default function SeizureFlowchart() {
         badge="EMT" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
       {/* Hypoglycemia side box */}
-      <BoxLabel x={712} y={Y_HYPO_BOX} w={140} h={56}
+      <BoxLabel x={CBX} y={Y_HYPO_BOX} w={CBW} h={56}
         lines={['→ Hypoglycemia', 'protocol']}
         textColor={C.destText} fontSize={11} />
 
@@ -460,7 +464,7 @@ export default function SeizureFlowchart() {
         badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
 
       {/* Mag Sulfate side box */}
-      <BoxLabel x={712} y={Y_MAG_BOX} w={140} h={88}
+      <BoxLabel x={CBX} y={Y_MAG_BOX} w={CBW} h={88}
         lines={['Mag Sulfate', '4 g IV/IO', '20 min slow push', '→ OB protocol']}
         textColor={C.destText} fontSize={11} />
 
@@ -473,12 +477,12 @@ export default function SeizureFlowchart() {
         badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder} />
 
       {/* Postictal side box */}
-      <BoxLabel x={712} y={Y_POSTICTAL_BOX} w={140} h={46}
+      <BoxLabel x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46}
         lines={['Postictal', '→ Step 6']}
         textColor={C.paraTitle} fontSize={11} />
 
       {/* Medical Direction side box */}
-      <BoxLabel x={712} y={Y_MEDDIR_BOX} w={140} h={46}
+      <BoxLabel x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46}
         lines={['Medical Direction']}
         textColor={C.destText} fontSize={12} />
 
