@@ -15,7 +15,7 @@ const BX = cx - BW / 2;   // 110
 const BR = BX + BW;        // 590  right edge of main boxes
 const CBX = BR + 6;        // 596  callout box left edge
 const CBW = 98;            //      callout box width (right edge 694)
-const DW = BW;             // 480  diamond width matches box width
+const DW = 360;            //      diamond width (right point = cx+DW/2 = 530)
 const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
@@ -302,7 +302,7 @@ export default function SeizureFlowchart() {
           lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={BR} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={cx + DW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_HYPO_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA1 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
@@ -322,7 +322,7 @@ export default function SeizureFlowchart() {
           lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
         {/* YES branch */}
-        <Line x1={BR} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={cx + DW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_MAG_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA2 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
@@ -374,7 +374,7 @@ export default function SeizureFlowchart() {
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={BR} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={cx + DW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_POSTICTAL_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA3 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
@@ -394,7 +394,7 @@ export default function SeizureFlowchart() {
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* NO branch */}
-        <Line x1={BR} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={cx + DW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_MEDDIR_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA4 - 4} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
         <Box x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
