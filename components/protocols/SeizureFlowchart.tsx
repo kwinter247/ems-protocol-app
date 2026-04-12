@@ -8,10 +8,11 @@ import Svg, {
 } from 'react-native-svg';
 
 const W = 860;
-const H = 3600;
+const H = 3800;
 const cx = W / 2;
 const BW = 560;
 const BX = cx - BW / 2;
+const STEP_H = 100; // was 72
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -63,7 +64,6 @@ interface BoxShapeProps {
   badgeBg?: string; badgeBorder?: string; badgeW?: number;
 }
 
-/** Renders only the rect (and optional badge rect). No text. */
 function Box({ x, y, w, h, fill, stroke, rx = 8, badgeBg, badgeBorder, badgeW }: BoxShapeProps) {
   return (
     <G>
@@ -83,7 +83,6 @@ interface StepBoxShapeProps {
   hasBadge?: boolean;
 }
 
-/** Renders only the rect (and optional badge rect). No text. */
 function StepBox({ x, y, w, h, fill, stroke, badgeBg, badgeBorder, hasBadge }: StepBoxShapeProps) {
   return (
     <G>
@@ -161,7 +160,6 @@ interface BoxLabelProps {
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
 }
 
-/** Absolutely-positioned RN View that renders centered text inside a box. */
 function BoxLabel({ x, y, w, h, lines, textColor, fontSize = 14, badge, badgeColor, badgeBg, badgeBorder }: BoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
@@ -186,24 +184,23 @@ function BoxLabel({ x, y, w, h, lines, textColor, fontSize = 14, badge, badgeCol
 
 interface StepBoxLabelProps {
   x: number; y: number; w: number; h: number;
-  stepNum: number; title: string; subtitle?: string;
+  stepLabel: string; title: string; subtitle?: string;
   titleColor: string; subtitleColor: string;
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
 }
 
-/** Absolutely-positioned RN View for StepBox text (left-aligned, vertically centered). */
-function StepBoxLabel({ x, y, w, h, stepNum, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder }: StepBoxLabelProps) {
+function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder }: StepBoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
       <View style={[styles.stepCenter, { paddingRight: badge ? 120 : 16 }]}>
-        <Text style={{ color: subtitleColor, fontSize: 10, fontWeight: '700', letterSpacing: 0.8, marginBottom: 2 }}>
-          {`STEP ${stepNum}`}
+        <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3 }}>
+          {stepLabel}
         </Text>
-        <Text style={{ color: titleColor, fontSize: 14, fontWeight: '800' }}>
+        <Text style={{ color: titleColor, fontSize: 16, fontWeight: '800' }}>
           {title}
         </Text>
         {subtitle && (
-          <Text style={{ color: subtitleColor, fontSize: 12, fontWeight: '400', marginTop: 2 }}>
+          <Text style={{ color: subtitleColor, fontSize: 13, fontWeight: '400', marginTop: 3 }}>
             {subtitle}
           </Text>
         )}
@@ -220,241 +217,289 @@ function StepBoxLabel({ x, y, w, h, stepNum, title, subtitle, titleColor, subtit
   );
 }
 
+// ── Layout constants ───────────────────────────────────────────
+// All Y positions calculated from top down, accounting for STEP_H = 100
+
+const Y_TITLE        = 38;
+const Y_INCL         = 72;
+const INCL_H         = 72;
+const Y_STEP1        = Y_INCL + INCL_H + 24;       // 168
+const Y_STEP2        = Y_STEP1 + STEP_H + 24;       // 292
+const Y_DIA1         = Y_STEP2 + STEP_H + 30 + 50;  // 472  (BGL diamond cy)
+const DIA1_H         = 100;
+const Y_STEP3        = Y_DIA1 + DIA1_H / 2 + 26;    // 548
+const Y_DIA2         = Y_STEP3 + STEP_H + 30 + 60;  // 738  (Pregnant diamond cy)
+const DIA2_H         = 120;
+const Y_SECHDR       = Y_DIA2 + DIA2_H / 2 + 26;    // 824
+const Y_BENZOHDR     = Y_SECHDR + 24 + 4;            // 852
+const BENZOHDR_H     = 40;
+const Y_BENZOCOLS    = Y_BENZOHDR + BENZOHDR_H + 4;  // 900
+const BENZO_COL_H    = 200;
+const Y_BENZOBOTTOM  = Y_BENZOCOLS + BENZO_COL_H;    // 1100
+const Y_DIA3         = Y_BENZOBOTTOM + 26 + 50;      // 1176  (Seizure stopped? 1 cy)
+const DIA3_H         = 100;
+const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
+const Y_DIA4         = Y_STEP5 + STEP_H + 30 + 50;  // 1432  (Seizure stopped? 2 cy)
+const DIA4_H         = 100;
+const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
+const STEP6_H        = 120; // taller — 4 lines of content
+const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
+const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
+const PREG_H         = 80;
+const Y_DISC         = Y_PREGNOTE + PREG_H + 20;    // 1876
+
+// Side box Y positions
+const Y_HYPO_BOX     = Y_DIA1 - 28;                 // aligned to diamond
+const Y_MAG_BOX      = Y_DIA2 - 44;
+const Y_POSTICTAL_BOX = Y_DIA3 + DIA3_H / 2 - 23 + 34;
+const Y_MEDDIR_BOX   = Y_DIA4 + DIA4_H / 2 - 23 + 34;
+
+const TOTAL_H = Y_DISC + 60;
+
 // ── Main component ─────────────────────────────────────────────
 export default function SeizureFlowchart() {
   const colW = BW / 2 - 5;
 
-  const colY = 812;
-  const colH = 200;
-  const colBottom = colY + colH; // 1012
-
   return (
-    <View style={{ width: W, height: H }}>
+    <View style={{ width: W, height: TOTAL_H }}>
 
-      {/* ── SVG LAYER: shapes, arrows, lines, explicit-y text ── */}
-      <Svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={StyleSheet.absoluteFill}>
-        <Rect x={0} y={0} width={W} height={H} fill={C.bg} />
+      {/* ── SVG LAYER ── */}
+      <Svg width={W} height={TOTAL_H} viewBox={`0 0 ${W} ${TOTAL_H}`} style={StyleSheet.absoluteFill}>
+        <Rect x={0} y={0} width={W} height={TOTAL_H} fill={C.bg} />
 
         {/* Title */}
-        <SvgText x={cx} y={38} textAnchor="middle" fontSize={20} fill={'#e6edf3'} fontWeight="800">
+        <SvgText x={cx} y={Y_TITLE} textAnchor="middle" fontSize={20} fill={'#e6edf3'} fontWeight="800">
           Seizure Protocol
         </SvgText>
-        <SvgText x={cx} y={58} textAnchor="middle" fontSize={11} fill={C.muted}>
+        <SvgText x={cx} y={Y_TITLE + 20} textAnchor="middle" fontSize={11} fill={C.muted}>
           Central Arizona Red Book 2026 · Adult &amp; Pediatric
         </SvgText>
 
         {/* Inclusion box shape */}
-        <Box x={BX} y={72} w={BW} h={72} fill={C.inclBg} stroke={C.inclBorder} rx={8} />
+        <Box x={BX} y={Y_INCL} w={BW} h={INCL_H} fill={C.inclBg} stroke={C.inclBorder} rx={8} />
 
-        <Arrow x1={cx} y1={144} x2={cx} y2={168} />
+        <Arrow x1={cx} y1={Y_INCL + INCL_H} x2={cx} y2={Y_STEP1} />
 
         {/* Step 1 shape */}
-        <StepBox x={BX} y={168} w={BW} h={72} fill={C.emtBg} stroke={C.emtBorder}
+        <StepBox x={BX} y={Y_STEP1} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
           hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
-        <Arrow x1={cx} y1={240} x2={cx} y2={264} />
+        <Arrow x1={cx} y1={Y_STEP1 + STEP_H} x2={cx} y2={Y_STEP2} />
 
         {/* Step 2 shape */}
-        <StepBox x={BX} y={264} w={BW} h={72} fill={C.emtBg} stroke={C.emtBorder}
+        <StepBox x={BX} y={Y_STEP2} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
           hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
-        <Arrow x1={cx} y1={336} x2={cx} y2={366} />
+        <Arrow x1={cx} y1={Y_STEP2 + STEP_H} x2={cx} y2={Y_DIA1 - DIA1_H / 2} />
 
         {/* Diamond: BGL < 60? */}
-        <Diamond cx={cx} cy={416} w={380} h={100}
+        <Diamond cx={cx} cy={Y_DIA1} w={380} h={DIA1_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + 190} y1={416} x2={720} y2={416} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={416} x2={720} y2={450} />
-        <SvgText x={724} y={412} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={450} w={140} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={cx + 190} y1={Y_DIA1} x2={720} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={720} y1={Y_DIA1} x2={720} y2={Y_HYPO_BOX} />
+        <SvgText x={724} y={Y_DIA1 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={712} y={Y_HYPO_BOX} w={140} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={466} x2={cx} y2={492} label="NO" />
+        <Arrow x1={cx} y1={Y_DIA1 + DIA1_H / 2} x2={cx} y2={Y_STEP3} label="NO" />
 
         {/* Step 3 shape */}
-        <StepBox x={BX} y={492} w={BW} h={72} fill={C.paraBg} stroke={C.paraBorder}
+        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder}
           hasBadge badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
 
-        <Arrow x1={cx} y1={564} x2={cx} y2={594} />
+        <Arrow x1={cx} y1={Y_STEP3 + STEP_H} x2={cx} y2={Y_DIA2 - DIA2_H / 2} />
 
         {/* Diamond: Pregnant? */}
-        <Diamond cx={cx} cy={654} w={440} h={120}
+        <Diamond cx={cx} cy={Y_DIA2} w={440} h={DIA2_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
         {/* YES branch */}
-        <Line x1={cx + 220} y1={654} x2={720} y2={654} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={654} x2={720} y2={688} />
-        <SvgText x={724} y={650} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={688} w={140} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={cx + 220} y1={Y_DIA2} x2={720} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={720} y1={Y_DIA2} x2={720} y2={Y_MAG_BOX} />
+        <SvgText x={724} y={Y_DIA2 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={712} y={Y_MAG_BOX} w={140} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={714} x2={cx} y2={740} label="NO" />
+        <Arrow x1={cx} y1={Y_DIA2 + DIA2_H / 2} x2={cx} y2={Y_SECHDR} label="NO" />
 
         {/* Step 4 section header + header bar */}
-        <SectionHeader x={BX} y={740} w={BW} text="Step 4 · Administer Benzodiazepine · Paramedic" />
-        <Rect x={BX} y={768} width={BW} height={40} fill={C.critBg} stroke={C.critBorder} strokeWidth={1.5} rx={8} />
-        <SvgText x={cx} y={793} textAnchor="middle" fontSize={14} fill={C.critTitle} fontWeight="800">
+        <SectionHeader x={BX} y={Y_SECHDR} w={BW} text="Step 4 · Administer Benzodiazepine · Paramedic" />
+        <Rect x={BX} y={Y_BENZOHDR} width={BW} height={BENZOHDR_H} fill={C.critBg} stroke={C.critBorder} strokeWidth={1.5} rx={8} />
+        <SvgText x={cx} y={Y_BENZOHDR + 26} textAnchor="middle" fontSize={14} fill={C.critTitle} fontWeight="800">
           Administer Benzodiazepine
         </SvgText>
 
         {/* Benzo columns — rects */}
-        <Rect x={BX} y={colY} width={colW} height={colH} fill={C.adultBg} stroke={C.adultBorder} strokeWidth={1.5} rx={8} />
-        <Rect x={BX + colW + 10} y={colY} width={colW} height={colH} fill={C.pedsBg} stroke={C.pedsBorder} strokeWidth={1.5} rx={8} />
+        <Rect x={BX} y={Y_BENZOCOLS} width={colW} height={BENZO_COL_H} fill={C.adultBg} stroke={C.adultBorder} strokeWidth={1.5} rx={8} />
+        <Rect x={BX + colW + 10} y={Y_BENZOCOLS} width={colW} height={BENZO_COL_H} fill={C.pedsBg} stroke={C.pedsBorder} strokeWidth={1.5} rx={8} />
 
-        {/* ADULT column text — explicit y positions, stays in SVG */}
-        <SvgText x={BX + colW / 2} y={834} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="800">ADULT (age ≥ 15)</SvgText>
-        <SvgText x={BX + colW / 2} y={856} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam</SvgText>
-        <SvgText x={BX + colW / 2} y={872} textAnchor="middle" fontSize={11} fill={C.adultDose}>IM / IN: 0.2 mg/kg</SvgText>
-        <SvgText x={BX + colW / 2} y={887} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 10 mg</SvgText>
-        <HRule x={BX + 10} y={900} w={colW - 20} />
-        <SvgText x={BX + colW / 2} y={916} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
-        <SvgText x={BX + colW / 2} y={932} textAnchor="middle" fontSize={11} fill={C.adultDose}>IV / IO: 0.1 mg/kg</SvgText>
-        <SvgText x={BX + colW / 2} y={947} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 4 mg</SvgText>
-        <HRule x={BX + 10} y={960} w={colW - 20} />
-        <SvgText x={BX + colW / 2} y={976} textAnchor="middle" fontSize={11} fill={'#d29922'} fontWeight="600">Age &gt; 60: reduce dose by half</SvgText>
-        <SvgText x={BX + colW / 2} y={992} textAnchor="middle" fontSize={11} fill={C.adultDose}>Slow over 2 min via IV/IO</SvgText>
+        {/* ADULT column text */}
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 22} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="800">ADULT (age ≥ 15)</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 44} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={11} fill={C.adultDose}>IM / IN: 0.2 mg/kg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 10 mg</SvgText>
+        <HRule x={BX + 10} y={Y_BENZOCOLS + 88} w={colW - 20} />
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 104} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={11} fill={C.adultDose}>IV / IO: 0.1 mg/kg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 4 mg</SvgText>
+        <HRule x={BX + 10} y={Y_BENZOCOLS + 148} w={colW - 20} />
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 164} textAnchor="middle" fontSize={11} fill={'#d29922'} fontWeight="600">Age &gt; 60: reduce dose by half</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 180} textAnchor="middle" fontSize={11} fill={C.adultDose}>Slow over 2 min via IV/IO</SvgText>
 
         {/* PEDS column text */}
-        <SvgText x={BX + colW + 10 + colW / 2} y={834} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="800">PEDIATRIC (age &lt; 15)</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={856} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={872} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IM / IN: 0.2 mg/kg</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={887} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 10 mg</SvgText>
-        <HRule x={BX + colW + 10 + 10} y={900} w={colW - 20} />
-        <SvgText x={BX + colW + 10 + colW / 2} y={916} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={932} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IV / IO: 0.1 mg/kg</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={947} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 4 mg</SvgText>
-        <HRule x={BX + colW + 10 + 10} y={960} w={colW - 20} />
-        <SvgText x={BX + colW + 10 + colW / 2} y={976} textAnchor="middle" fontSize={11} fill={C.pedsDose} fontWeight="600">Slow over 2 min via IV/IO</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 22} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="800">PEDIATRIC (age &lt; 15)</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 44} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IM / IN: 0.2 mg/kg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 10 mg</SvgText>
+        <HRule x={BX + colW + 10 + 10} y={Y_BENZOCOLS + 88} w={colW - 20} />
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 104} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IV / IO: 0.1 mg/kg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 4 mg</SvgText>
+        <HRule x={BX + colW + 10 + 10} y={Y_BENZOCOLS + 148} w={colW - 20} />
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 164} textAnchor="middle" fontSize={11} fill={C.pedsDose} fontWeight="600">Slow over 2 min via IV/IO</SvgText>
 
-        <Arrow x1={cx} y1={colBottom} x2={cx} y2={1038} />
+        <Arrow x1={cx} y1={Y_BENZOBOTTOM} x2={cx} y2={Y_DIA3 - DIA3_H / 2} />
 
         {/* Diamond: Seizure stopped? (1) */}
-        <Diamond cx={cx} cy={1088} w={380} h={100}
+        <Diamond cx={cx} cy={Y_DIA3} w={380} h={DIA3_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + 190} y1={1088} x2={720} y2={1088} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={1088} x2={720} y2={1122} />
-        <SvgText x={724} y={1084} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
-        <Box x={712} y={1122} w={140} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
+        <Line x1={cx + 190} y1={Y_DIA3} x2={720} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={720} y1={Y_DIA3} x2={720} y2={Y_POSTICTAL_BOX} />
+        <SvgText x={724} y={Y_DIA3 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
+        <Box x={712} y={Y_POSTICTAL_BOX} w={140} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={1138} x2={cx} y2={1164} label="NO" labelSide="right" />
+        <Arrow x1={cx} y1={Y_DIA3 + DIA3_H / 2} x2={cx} y2={Y_STEP5} label="NO" labelSide="right" />
 
-        {/* Step 5 rect + inline text */}
-        <Rect x={BX} y={1164} width={BW} height={100} fill={C.critBg} stroke={C.critBorder} strokeWidth={1.5} rx={10} />
-        <SvgText x={BX + 16} y={1185} fontSize={10} fill={C.critTitle} fontWeight="700" letterSpacing={0.8}>STEP 5 · PARAMEDIC</SvgText>
-        <SvgText x={BX + 16} y={1204} fontSize={14} fill={C.critTitle} fontWeight="800">Repeat Benzodiazepine — 1 repeat dose max</SvgText>
-        <SvgText x={BX + 16} y={1223} fontSize={11} fill={'#e6b87a'}>Same drug and dose · Max 2 total doses regardless of route</SvgText>
-        <SvgText x={BX + 16} y={1241} fontSize={11} fill={'#e6b87a'}>Ketamine NOT indicated for postictal agitation</SvgText>
+        {/* Step 5 shape */}
+        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder}
+          hasBadge badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder} />
 
-        <Arrow x1={cx} y1={1264} x2={cx} y2={1290} />
+        <Arrow x1={cx} y1={Y_STEP5 + STEP_H} x2={cx} y2={Y_DIA4 - DIA4_H / 2} />
 
         {/* Diamond: Seizure stopped? (2) */}
-        <Diamond cx={cx} cy={1340} w={380} h={100}
+        <Diamond cx={cx} cy={Y_DIA4} w={380} h={DIA4_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* NO branch */}
-        <Line x1={cx + 190} y1={1340} x2={720} y2={1340} stroke={C.arrow} strokeWidth={1.5} />
-        <Arrow x1={720} y1={1340} x2={720} y2={1374} />
-        <SvgText x={724} y={1336} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
-        <Box x={712} y={1374} w={140} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
+        <Line x1={cx + 190} y1={Y_DIA4} x2={720} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
+        <Arrow x1={720} y1={Y_DIA4} x2={720} y2={Y_MEDDIR_BOX} />
+        <SvgText x={724} y={Y_DIA4 - 4} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
+        <Box x={712} y={Y_MEDDIR_BOX} w={140} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* YES branch */}
-        <Arrow x1={cx} y1={1390} x2={cx} y2={1416} label="YES" />
+        <Arrow x1={cx} y1={Y_DIA4 + DIA4_H / 2} x2={cx} y2={Y_STEP6} label="YES" />
 
-        {/* Step 6 rect + inline text */}
-        <Rect x={BX} y={1416} width={BW} height={100} fill={C.paraBg} stroke={C.paraBorder} strokeWidth={1.5} rx={10} />
-        <Rect x={BX + BW - 112} y={1424} width={104} height={19} fill="rgba(15,110,86,0.15)" stroke={C.paraBorder} strokeWidth={1} rx={4} />
-        <SvgText x={BX + 16} y={1437} fontSize={10} fill={C.paraSub} fontWeight="700" letterSpacing={0.8}>STEP 6 · PARAMEDIC</SvgText>
-        <SvgText x={BX + 16} y={1456} fontSize={14} fill={C.paraTitle} fontWeight="800">Postictal Care</SvgText>
-        <SvgText x={BX + 16} y={1475} fontSize={12} fill={C.paraSub}>Maintain airway · positioning · continuous monitoring</SvgText>
-        <SvgText x={BX + 16} y={1491} fontSize={12} fill={C.paraSub}>If agitation: refer to Agitated/Violent Patient protocol</SvgText>
-        <SvgText x={BX + 16} y={1507} fontSize={12} fill={C.paraSub}>Ketamine NOT indicated postictal</SvgText>
-        <SvgText x={BX + BW - 60} y={1433} textAnchor="middle" fontSize={10} fill={C.paraTitle} fontWeight="700">PARAMEDIC</SvgText>
+        {/* Step 6 shape */}
+        <StepBox x={BX} y={Y_STEP6} w={BW} h={STEP6_H} fill={C.paraBg} stroke={C.paraBorder}
+          hasBadge badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
 
-        <Arrow x1={cx} y1={1516} x2={cx} y2={1540} />
+        <Arrow x1={cx} y1={Y_STEP6 + STEP6_H} x2={cx} y2={Y_STEP7} />
 
         {/* Step 7 shape */}
-        <StepBox x={BX} y={1540} w={BW} h={72} fill={C.emtBg} stroke={C.emtBorder}
+        <StepBox x={BX} y={Y_STEP7} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
           hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
+        <Arrow x1={cx} y1={Y_STEP7 + STEP_H} x2={cx} y2={Y_PREGNOTE} />
+
         {/* Pregnancy Note shape */}
-        <Box x={BX} y={1636} w={BW} h={80} fill={C.pregBg} stroke={C.pregBorder} rx={8} />
+        <Box x={BX} y={Y_PREGNOTE} w={BW} h={PREG_H} fill={C.pregBg} stroke={C.pregBorder} rx={8} />
 
         {/* Disclaimer */}
-        <Rect x={BX} y={1740} width={BW} height={1} fill={C.muted} />
-        <SvgText x={cx} y={1758} textAnchor="middle" fontSize={10} fill={C.discText}>
+        <Rect x={BX} y={Y_DISC} width={BW} height={1} fill={C.muted} />
+        <SvgText x={cx} y={Y_DISC + 18} textAnchor="middle" fontSize={10} fill={C.discText}>
           Reference aid only — not a substitute for clinical judgment or online medical direction
         </SvgText>
-        <SvgText x={cx} y={1774} textAnchor="middle" fontSize={10} fill={C.discText}>
+        <SvgText x={cx} y={Y_DISC + 34} textAnchor="middle" fontSize={10} fill={C.discText}>
           Central AZ Red Book 2026 p.23
         </SvgText>
       </Svg>
 
-      {/* ── RN TEXT OVERLAY LAYER ─────────────────────────────── */}
+      {/* ── RN TEXT OVERLAY LAYER ── */}
 
       {/* Inclusion box */}
-      <BoxLabel x={BX} y={72} w={BW} h={72}
+      <BoxLabel x={BX} y={Y_INCL} w={BW} h={INCL_H}
         lines={['INCLUDES:', 'Ongoing seizure on arrival · Seizure > 5 min', '> 2 seizures/hr without recovery (Status Epilepticus)']}
         textColor={C.inclText} fontSize={12} />
 
       {/* Step 1 */}
-      <StepBoxLabel x={BX} y={168} w={BW} h={72}
-        stepNum={1} title="Initiate Universal Care"
+      <StepBoxLabel x={BX} y={Y_STEP1} w={BW} h={STEP_H}
+        stepLabel="STEP 1"
+        title="Initiate Universal Care"
         subtitle="Airway support · AVPU/GCS · O₂ as needed"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="EMT" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
       {/* Step 2 */}
-      <StepBoxLabel x={BX} y={264} w={BW} h={72}
-        stepNum={2} title="Check Blood Glucose"
+      <StepBoxLabel x={BX} y={Y_STEP2} w={BW} h={STEP_H}
+        stepLabel="STEP 2"
+        title="Check Blood Glucose"
         subtitle="Fingerstick BGL · If pregnant → left lateral recumbent"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="EMT" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
       {/* Hypoglycemia side box */}
-      <BoxLabel x={712} y={450} w={140} h={56}
+      <BoxLabel x={712} y={Y_HYPO_BOX} w={140} h={56}
         lines={['→ Hypoglycemia', 'protocol']}
         textColor={C.destText} fontSize={11} />
 
       {/* Step 3 */}
-      <StepBoxLabel x={BX} y={492} w={BW} h={72}
-        stepNum={3} title="IV/IO Access + Cardiac & EtCO₂ Monitoring"
+      <StepBoxLabel x={BX} y={Y_STEP3} w={BW} h={STEP_H}
+        stepLabel="STEP 3"
+        title="IV/IO Access + Cardiac & EtCO₂ Monitoring"
         subtitle="Establish access · Continuous monitoring"
         titleColor={C.paraTitle} subtitleColor={C.paraSub}
         badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
 
       {/* Mag Sulfate side box */}
-      <BoxLabel x={712} y={688} w={140} h={88}
+      <BoxLabel x={712} y={Y_MAG_BOX} w={140} h={88}
         lines={['Mag Sulfate', '4 g IV/IO', '20 min slow push', '→ OB protocol']}
         textColor={C.destText} fontSize={11} />
 
+      {/* Step 5 */}
+      <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP_H}
+        stepLabel="STEP 5 · PARAMEDIC"
+        title="Repeat Benzodiazepine — 1 repeat dose max"
+        subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
+        titleColor={C.critTitle} subtitleColor={'#e6b87a'}
+        badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder} />
+
       {/* Postictal side box */}
-      <BoxLabel x={712} y={1122} w={140} h={46}
+      <BoxLabel x={712} y={Y_POSTICTAL_BOX} w={140} h={46}
         lines={['Postictal', '→ Step 6']}
         textColor={C.paraTitle} fontSize={11} />
 
       {/* Medical Direction side box */}
-      <BoxLabel x={712} y={1374} w={140} h={46}
+      <BoxLabel x={712} y={Y_MEDDIR_BOX} w={140} h={46}
         lines={['Medical Direction']}
         textColor={C.destText} fontSize={12} />
 
+      {/* Step 6 */}
+      <StepBoxLabel x={BX} y={Y_STEP6} w={BW} h={STEP6_H}
+        stepLabel="STEP 6 · PARAMEDIC"
+        title="Postictal Care"
+        subtitle={"Maintain airway · positioning · continuous monitoring\nIf agitation: refer to Agitated/Violent Patient protocol\nKetamine NOT indicated postictal"}
+        titleColor={C.paraTitle} subtitleColor={C.paraSub}
+        badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
+
       {/* Step 7 */}
-      <StepBoxLabel x={BX} y={1540} w={BW} h={72}
-        stepNum={7} title="Transport — Notify Receiving Facility"
+      <StepBoxLabel x={BX} y={Y_STEP7} w={BW} h={STEP_H}
+        stepLabel="STEP 7"
+        title="Transport — Notify Receiving Facility"
         subtitle="ALS intercept if not already on scene"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="ALL PROVIDERS" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
       {/* Pregnancy Note */}
-      <BoxLabel x={BX} y={1636} w={BW} h={80}
+      <BoxLabel x={BX} y={Y_PREGNOTE} w={BW} h={PREG_H}
         lines={['⚠  PREGNANCY NOTE', 'Mag sulfate is first-line for eclamptic seizure', 'If etiology unclear: may give benzo simultaneously with mag']}
         textColor={C.pregText} fontSize={12} />
 
