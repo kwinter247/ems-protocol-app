@@ -304,7 +304,7 @@ export default function SeizureFlowchart() {
           lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Arrow x1={DCX + DW / 2} y1={Y_DIA1} x2={CBX} y2={Y_DIA1} label="YES" labelSide="right" />
+        <Arrow x1={DCX + DW / 2} y1={Y_DIA1} x2={CBX} y2={Y_DIA1} label="YES" labelSide="left" />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_HYPO_BOX} />
         <Box x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
@@ -323,7 +323,7 @@ export default function SeizureFlowchart() {
           lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
         {/* YES branch */}
-        <Arrow x1={DCX + DW / 2} y1={Y_DIA2} x2={CBX} y2={Y_DIA2} label="YES" labelSide="right" />
+        <Arrow x1={DCX + DW / 2} y1={Y_DIA2} x2={CBX} y2={Y_DIA2} label="YES" labelSide="left" />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_MAG_BOX} />
         <Box x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
@@ -374,7 +374,7 @@ export default function SeizureFlowchart() {
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Arrow x1={DCX + DW / 2} y1={Y_DIA3} x2={CBX} y2={Y_DIA3} label="YES" labelSide="right" />
+        <Arrow x1={DCX + DW / 2} y1={Y_DIA3} x2={CBX} y2={Y_DIA3} label="YES" labelSide="left" />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_POSTICTAL_BOX} />
         <Box x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
 
@@ -393,7 +393,7 @@ export default function SeizureFlowchart() {
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* NO branch */}
-        <Arrow x1={DCX + DW / 2} y1={Y_DIA4} x2={CBX} y2={Y_DIA4} label="NO" labelSide="right" />
+        <Arrow x1={DCX + DW / 2} y1={Y_DIA4} x2={CBX} y2={Y_DIA4} label="NO" labelSide="left" />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_MEDDIR_BOX} />
         <Box x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
