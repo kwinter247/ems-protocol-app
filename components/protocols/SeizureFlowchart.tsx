@@ -11,11 +11,12 @@ const W = 540;
 const H = 3800;
 const cx = W / 2;         // 270
 const BW = 390;
-const BX = cx - BW / 2;   // 75
-const BR = BX + BW;        // 465  right edge of main boxes
-const CBX = BR + 8;        // 473  callout box left edge
-const CBW = 110;           //      callout box width (right edge 583)
-const DW = 240;            //      diamond width (right point = cx+DW/2 = 390)
+const BX = cx - BW / 2;        // 75
+const BR = BX + BW;             // 465  right edge of main boxes
+const DW = 240;                 //      diamond width
+const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
+const CBX = DCX + DW / 2 + 8;  // 323  callout box left edge (right edge 433)
+const CBW = 110;                //      callout box width
 const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
@@ -294,41 +295,41 @@ export default function SeizureFlowchart() {
         <StepBox x={BX} y={Y_STEP2} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
           hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
 
-        <Arrow x1={cx} y1={Y_STEP2 + STEP_H} x2={cx} y2={Y_DIA1 - DIA1_H / 2} />
+        <Arrow x1={cx} y1={Y_STEP2 + STEP_H} x2={DCX} y2={Y_DIA1 - DIA1_H / 2} />
 
         {/* Diamond: BGL < 60? */}
-        <Diamond cx={cx} cy={Y_DIA1} w={DW} h={DIA1_H}
+        <Diamond cx={DCX} cy={Y_DIA1} w={DW} h={DIA1_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['BGL < 60 mg/dL?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + DW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={DCX + DW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_DIA1} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_HYPO_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA1 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={Y_DIA1 + DIA1_H / 2} x2={cx} y2={Y_STEP3} label="NO" />
+        <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={cx} y2={Y_STEP3} label="NO" />
 
         {/* Step 3 shape */}
         <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder}
           hasBadge badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
 
-        <Arrow x1={cx} y1={Y_STEP3 + STEP_H} x2={cx} y2={Y_DIA2 - DIA2_H / 2} />
+        <Arrow x1={cx} y1={Y_STEP3 + STEP_H} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
 
         {/* Diamond: Pregnant? */}
-        <Diamond cx={cx} cy={Y_DIA2} w={DW} h={DIA2_H}
+        <Diamond cx={DCX} cy={Y_DIA2} w={DW} h={DIA2_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Pregnant > 20 wk', 'or postpartum < 6 wk?']} textColor={C.decText} fontSize={13} />
 
         {/* YES branch */}
-        <Line x1={cx + DW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={DCX + DW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_DIA2} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_MAG_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA2 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={Y_DIA2 + DIA2_H / 2} x2={cx} y2={Y_SECHDR} label="NO" />
+        <Arrow x1={DCX} y1={Y_DIA2 + DIA2_H / 2} x2={cx} y2={Y_SECHDR} label="NO" />
 
         {/* Step 4 section header + header bar */}
         <SectionHeader x={BX} y={Y_SECHDR} w={BW} text="Step 4 · Administer Benzodiazepine · Paramedic" />
@@ -366,41 +367,41 @@ export default function SeizureFlowchart() {
         <HRule x={BX + colW + 10 + 10} y={Y_BENZOCOLS + 148} w={colW - 20} />
         <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 164} textAnchor="middle" fontSize={11} fill={C.pedsDose} fontWeight="600">Slow over 2 min via IV/IO</SvgText>
 
-        <Arrow x1={cx} y1={Y_BENZOBOTTOM} x2={cx} y2={Y_DIA3 - DIA3_H / 2} />
+        <Arrow x1={cx} y1={Y_BENZOBOTTOM} x2={DCX} y2={Y_DIA3 - DIA3_H / 2} />
 
         {/* Diamond: Seizure stopped? (1) */}
-        <Diamond cx={cx} cy={Y_DIA3} w={DW} h={DIA3_H}
+        <Diamond cx={DCX} cy={Y_DIA3} w={DW} h={DIA3_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* YES branch */}
-        <Line x1={cx + DW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={DCX + DW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_DIA3} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_POSTICTAL_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA3 - 4} fontSize={11} fill={C.label} fontWeight="700">YES</SvgText>
         <Box x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={cx} y1={Y_DIA3 + DIA3_H / 2} x2={cx} y2={Y_STEP5} label="NO" labelSide="right" />
+        <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={cx} y2={Y_STEP5} label="NO" labelSide="right" />
 
         {/* Step 5 shape */}
         <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder}
           hasBadge badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder} />
 
-        <Arrow x1={cx} y1={Y_STEP5 + STEP_H} x2={cx} y2={Y_DIA4 - DIA4_H / 2} />
+        <Arrow x1={cx} y1={Y_STEP5 + STEP_H} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
 
         {/* Diamond: Seizure stopped? (2) */}
-        <Diamond cx={cx} cy={Y_DIA4} w={DW} h={DIA4_H}
+        <Diamond cx={DCX} cy={Y_DIA4} w={DW} h={DIA4_H}
           fill={C.decBg} stroke={C.decBorder}
           lines={['Seizure stopped?']} textColor={C.decText} fontSize={14} />
 
         {/* NO branch */}
-        <Line x1={cx + DW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
+        <Line x1={DCX + DW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_DIA4} stroke={C.arrow} strokeWidth={1.5} />
         <Arrow x1={CBX + CBW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_MEDDIR_BOX} />
         <SvgText x={CBX + CBW / 2 + 4} y={Y_DIA4 - 4} fontSize={11} fill={C.label} fontWeight="700">NO</SvgText>
         <Box x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* YES branch */}
-        <Arrow x1={cx} y1={Y_DIA4 + DIA4_H / 2} x2={cx} y2={Y_STEP6} label="YES" />
+        <Arrow x1={DCX} y1={Y_DIA4 + DIA4_H / 2} x2={cx} y2={Y_STEP6} label="YES" />
 
         {/* Step 6 shape */}
         <StepBox x={BX} y={Y_STEP6} w={BW} h={STEP6_H} fill={C.paraBg} stroke={C.paraBorder}
