@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   View,
   Text,
@@ -45,6 +46,14 @@ export default function ProtocolViewer() {
   const translateY = useSharedValue(0);
   const savedX = useSharedValue(0);
   const savedY = useSharedValue(0);
+  const originX = useSharedValue(0);
+  const originY = useSharedValue(0);
+
+  useEffect(() => {
+    const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
+    translateX.value = -offset;
+    savedX.value = -offset;
+  }, []);
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -88,11 +97,12 @@ export default function ProtocolViewer() {
   };
 
   const resetZoom = () => {
+    const offset = (FLOWCHART_W * (1 - INITIAL_SCALE)) / 2;
     scale.value = withTiming(INITIAL_SCALE, { duration: 250 });
     savedScale.value = INITIAL_SCALE;
-    translateX.value = withTiming(0, { duration: 250 });
+    translateX.value = withTiming(-offset, { duration: 250 });
     translateY.value = withTiming(0, { duration: 250 });
-    savedX.value = 0;
+    savedX.value = -offset;
     savedY.value = 0;
   };
 
