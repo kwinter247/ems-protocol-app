@@ -18,6 +18,7 @@ const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
 const STEP_H = 120;
+const STEP5_H = 150;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -246,7 +247,7 @@ const Y_BENZOBOTTOM  = Y_BENZOCOLS + BENZO_COL_H;    // 1100
 const Y_DIA3         = Y_BENZOBOTTOM + 26 + 50;      // 1176  (Seizure stopped? 1 cy)
 const DIA3_H         = 100;
 const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
-const Y_DIA4         = Y_STEP5 + STEP_H + 30 + 50;  // 1432  (Seizure stopped? 2 cy)
+const Y_DIA4         = Y_STEP5 + STEP5_H + 30 + 50; // (Seizure stopped? 2 cy)
 const DIA4_H         = 100;
 const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
 const STEP6_H        = 200; // taller — 4 lines of content
@@ -377,9 +378,9 @@ export default function SeizureFlowchart() {
         <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={DCX} y2={Y_STEP5} label="NO" labelSide="right" />
 
         {/* Step 5 shape */}
-        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder} />
+        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP5_H} fill={C.critBg} stroke={C.critBorder} />
 
-        <Arrow x1={DCX} y1={Y_STEP5 + STEP_H} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
+        <Arrow x1={DCX} y1={Y_STEP5 + STEP5_H} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
 
         {/* Diamond: Seizure stopped? (2) */}
         <Diamond cx={DCX} cy={Y_DIA4} w={DW} h={DIA4_H}
@@ -430,7 +431,7 @@ export default function SeizureFlowchart() {
         subtitle="Airway support · AVPU/GCS · O₂ as needed"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="EMT" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder}
-        subtitleFontSize={12} />
+        subtitleFontSize={10} />
 
       {/* Step 2 */}
       <StepBoxLabel x={BX} y={Y_STEP2} w={BW} h={STEP_H}
@@ -439,7 +440,7 @@ export default function SeizureFlowchart() {
         subtitle="Fingerstick BGL · If pregnant → left lateral recumbent"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="EMT" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder}
-        subtitleFontSize={11} />
+        subtitleFontSize={10} />
 
       {/* Hypoglycemia side box */}
       <BoxLabel x={CBX} y={Y_HYPO_BOX} w={CBW} h={56}
@@ -461,7 +462,7 @@ export default function SeizureFlowchart() {
         textColor={C.destText} fontSize={11} />
 
       {/* Step 5 */}
-      <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP5_H}
         stepLabel="STEP 5"
         title="Repeat Benzodiazepine — 1 repeat dose max"
         subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
@@ -483,10 +484,10 @@ export default function SeizureFlowchart() {
       <StepBoxLabel x={BX} y={Y_STEP6} w={BW} h={STEP6_H}
         stepLabel="STEP 6"
         title="Postictal Care"
-        subtitle="Maintain airway · positioning · continuous monitoring · If agitation: refer to Agitated/Violent Patient protocol · Ketamine NOT indicated postictal"
+        subtitle={"Maintain airway · positioning · continuous monitoring\nIf agitation: refer to Agitated/Violent Patient protocol\nKetamine NOT indicated postictal"}
         titleColor={C.paraTitle} subtitleColor={C.paraSub}
         badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder}
-        subtitleFontSize={10} />
+        subtitleFontSize={11} />
 
       {/* Step 7 */}
       <StepBoxLabel x={BX} y={Y_STEP7} w={BW} h={STEP_H}
