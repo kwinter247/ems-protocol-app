@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 130;
+const STEP_H = 140;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -446,7 +446,7 @@ export default function SeizureFlowchart() {
       {/* Step 3 */}
       <StepBoxLabel x={BX} y={Y_STEP3} w={BW} h={STEP_H}
         stepLabel="STEP 3"
-        title="IV/IO Access + Cardiac & EtCO₂ Monitoring"
+        title={"IV/IO Access\n+ Cardiac & EtCO₂ Monitoring"}
         subtitle="Establish access · Continuous monitoring"
         titleColor={C.paraTitle} subtitleColor={C.paraSub}
         badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
