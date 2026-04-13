@@ -1,5 +1,5 @@
 # EMS Protocol App — Claude Session State
-Last updated: April 12, 2026 (evening)
+Last updated: April 12, 2026 (end of day)
 
 ## Stack
 - React Native + Expo SDK 54, Expo Router
@@ -11,20 +11,25 @@ Last updated: April 12, 2026 (evening)
 - Testing: Expo Go on Android
 
 ## Current Architecture: SeizureFlowchart.tsx
-- SVG layer renders shapes, arrows, lines only — NO text in SVG for boxes
-- RN View/Text overlay layer renders ALL box text (foreignObject unsupported on Android)
-- StepBoxLabel: left-aligned text, vertically centered, paddingLeft 16
-- BoxLabel: center-aligned text, vertically centered
-- Badge rendering ONLY from StepBoxLabel overlay — never from SVG StepBox shape
-- All StepBox SVG shapes have NO hasBadge prop
+- SVG layer renders shapes, arrows, diamonds, lines ONLY — no box rects or text
+- RN View/Text overlay renders ALL step box borders, backgrounds, and text
+- StepBoxLabel: owns its own border + background (borderWidth 1.5, borderRadius 10)
+  - fill/stroke props set backgroundColor and borderColor
+  - Self-sizing (no fixed h prop) — paddingVertical 10, paddingLeft 16
+  - titleFontSize prop (default 16), subtitleFontSize prop (default 14)
+  - Badge rendered only in RN overlay, never in SVG
+- BoxLabel: center-aligned text, vertically centered, fixed height
+- All SVG StepBox shape calls removed — StepBoxLabel is the single source of truth
 
 ## Key Layout Constants (SeizureFlowchart.tsx)
-- W = 540, H = 3800
+- W = 540
 - BW = 390, BX = 75, BR = 465
 - DW = 240, DCX = BX + DW/2 = 195
 - CBW = 110, CBX = BR - CBW = 355
-- STEP_H = 120, STEP6_H = 200
+- STEP_H = 90 (used for SVG arrow spacing; step boxes self-size via RN)
+- STEP6_H = 125 (still used for arrow y1 from Step 6 bottom)
 - BENZO_COL_H = 220
+- All arrow gaps between steps and diamonds: 24px (standardized)
 
 ## Viewer: app/protocol/[id].tsx
 - FLOWCHART_W = 540, FLOWCHART_H = 3800
@@ -33,29 +38,40 @@ Last updated: April 12, 2026 (evening)
 - translateX = 0, translateY = 0 at initial load
 - Pinch/pan gestures via react-native-gesture-handler
 
+## SeizureFlowchart Step Text (current)
+- Step 1: "Initiate Universal Care" / subtitleFontSize 10
+- Step 2: "Check Blood Glucose" / subtitleFontSize 10
+- Step 3: "IV/IO Access\n+ Cardiac & EtCO₂ Monitoring" / subtitleFontSize 12
+- Step 5: "Repeat Benzodiazepine\n1 repeat dose max" / titleFontSize 17, subtitleFontSize 11
+- Step 6: "Postictal Care" / subtitleFontSize 11 (3-line \n subtitle)
+- Step 7: "Transport" / subtitleFontSize 11
+
 ## SeizureFlowchart Status: NEARLY COMPLETE
-Remaining minor work:
+Remaining work:
+- On-device test to verify no text wrapping and arrow alignment looks correct
+- STEP_H and STEP6_H may need minor tuning once self-sizing boxes are tested
+  (SVG arrows use these constants; RN boxes size to content independently)
 - Verify pregnancy note and disclaimer render cleanly at bottom
-- On-device test to confirm no text wrapping in any step box
 
 ## Completed Work
 - Full 7-step seizure flowchart built and rendering
 - SVG text → RN overlay rewrite (Android foreignObject fix)
 - Diamond geometry: DCX left-shifted, callouts flush with BR
-- YES/NO labels on arrows working
+- YES/NO labels on arrows
 - All callout boxes inside canvas bounds
-- Badge SVG rect removed from all StepBox shapes — badge only from overlay
-- Benzo column font increased to 13px
-- Screen-filling scale on load
-- subtitleFontSize prop on StepBoxLabel: 12 for Steps 1,3,7; 11 for Steps 2,5,7; 10 for Step 6
-- stepCenter style: paddingTop/Bottom 8 added
+- Badge double-border fully resolved — SVG StepBox shapes eliminated entirely
+- StepBoxLabel converted to self-sizing with RN border/background
+- subtitleFontSize and titleFontSize props added to StepBoxLabel
 - stepLabel simplified: "STEP 5", "STEP 6" (no · PARAMEDIC suffix)
-- Step 7 title shortened to "Transport", subtitle carries detail
-- Step 6 subtitle flattened to single line at fontSize 10
+- Step 5 and 6 subtitle line breaks controlled via \n
+- Benzo column font 13px
+- Screen-filling scale on load
+- All arrow gaps standardized to 24px
+- SectionHeader font increased to 13px
 
 ## Remaining Tasks (after SeizureFlowchart complete)
 1. Fix Android nav bar covering bottom tabs
-2. Replace 24-drug dataset with 40-drug Red Book dataset  
+2. Replace 24-drug dataset with 40-drug Red Book dataset
 3. Build Stroke/TIA flowchart (clone SeizureFlowchart as template)
 4. Build Cardiac Arrest flowchart
 5. EAS Build / App Store submission
