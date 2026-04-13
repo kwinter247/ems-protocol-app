@@ -51,6 +51,15 @@ Last updated: April 12, 2026
 4. Build Cardiac Arrest flowchart
 5. EAS Build / App Store submission
 
+## Active Punch List
+1. Chart not filling screen correctly (FLOWCHART_W reverted to 540)
+2. NO label should be right of arrow not above it
+3. Double badge border on Steps 3, 5, 6 — fix in progress
+4. Remove extra arrows above callout boxes
+5. Benzo font size increase to 13
+6. Step 5 and 6 need more height
+7. Callout box vertical drop arrows removed
+
 ## Known Issues
 - Step 2 subtitle wraps to 2 lines (box slightly narrow for long text)
 - Step 3 title wraps to 2 lines at current font size
