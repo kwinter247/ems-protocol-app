@@ -440,7 +440,7 @@ export default function SeizureFlowchart() {
 
       {/* Hypoglycemia side box */}
       <BoxLabel x={CBX} y={Y_HYPO_BOX} w={CBW} h={56}
-        lines={['→ Hypoglycemia', 'protocol']}
+        lines={['Hypoglycemia', 'protocol']}
         textColor={C.destText} fontSize={11} />
 
       {/* Step 3 */}
