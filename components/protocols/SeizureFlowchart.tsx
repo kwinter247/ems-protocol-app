@@ -201,7 +201,7 @@ interface StepBoxLabelProps {
 function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14, titleFontSize = 16 }: StepBoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
-      <View style={[styles.stepCenter, { paddingRight: badge ? 120 : 16 }]}>
+      <View style={[styles.stepCenter, { paddingRight: badge ? 60 : 16 }]}>
         <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3 }}>
           {stepLabel}
         </Text>
@@ -469,7 +469,7 @@ export default function SeizureFlowchart() {
         subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
         titleColor={C.critTitle} subtitleColor={'#e6b87a'}
         badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder}
-        titleFontSize={15} subtitleFontSize={11} />
+        titleFontSize={17} subtitleFontSize={11} />
 
       {/* Postictal side box */}
       <BoxLabel x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46}
@@ -497,7 +497,7 @@ export default function SeizureFlowchart() {
         subtitle="Notify Receiving Facility · ALS intercept if not on scene"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="ALL PROVIDERS" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder}
-        subtitleFontSize={10} />
+        subtitleFontSize={11} />
 
       {/* Pregnancy Note */}
       <BoxLabel x={BX} y={Y_PREGNOTE} w={BW} h={PREG_H}
