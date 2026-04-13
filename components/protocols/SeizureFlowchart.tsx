@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 100;
+const STEP_H = 90;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -250,7 +250,7 @@ const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
 const Y_DIA4         = Y_STEP5 + STEP_H + 30 + 50;  // (Seizure stopped? 2 cy)
 const DIA4_H         = 100;
 const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
-const STEP6_H        = 130; // 3 subtitle lines + title + step label
+const STEP6_H        = 125; // 3 subtitle lines + title + step label
 const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
 const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
 const PREG_H         = 80;
