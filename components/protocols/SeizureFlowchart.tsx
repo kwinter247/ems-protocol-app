@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 100;
+const STEP_H = 110;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -240,7 +240,7 @@ const Y_SECHDR       = Y_DIA2 + DIA2_H / 2 + 26;    // 824
 const Y_BENZOHDR     = Y_SECHDR + 24 + 4;            // 852
 const BENZOHDR_H     = 40;
 const Y_BENZOCOLS    = Y_BENZOHDR + BENZOHDR_H + 4;  // 900
-const BENZO_COL_H    = 200;
+const BENZO_COL_H    = 220;
 const Y_BENZOBOTTOM  = Y_BENZOCOLS + BENZO_COL_H;    // 1100
 const Y_DIA3         = Y_BENZOBOTTOM + 26 + 50;      // 1176  (Seizure stopped? 1 cy)
 const DIA3_H         = 100;
@@ -248,7 +248,7 @@ const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
 const Y_DIA4         = Y_STEP5 + STEP_H + 30 + 50;  // 1432  (Seizure stopped? 2 cy)
 const DIA4_H         = 100;
 const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
-const STEP6_H        = 120; // taller — 4 lines of content
+const STEP6_H        = 160; // taller — 4 lines of content
 const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
 const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
 const PREG_H         = 80;
@@ -305,15 +305,13 @@ export default function SeizureFlowchart() {
 
         {/* YES branch */}
         <Arrow x1={DCX + DW / 2} y1={Y_DIA1} x2={CBX} y2={Y_DIA1} label="YES" labelSide="left" />
-        <Arrow x1={CBX + CBW / 2} y1={Y_DIA1} x2={CBX + CBW / 2} y2={Y_HYPO_BOX} />
         <Box x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} label="NO" />
+        <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} label="NO" labelSide="right" />
 
         {/* Step 3 shape */}
-        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder}
-          hasBadge badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
+        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder} />
 
         <Arrow x1={DCX} y1={Y_STEP3 + STEP_H} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
 
@@ -324,11 +322,10 @@ export default function SeizureFlowchart() {
 
         {/* YES branch */}
         <Arrow x1={DCX + DW / 2} y1={Y_DIA2} x2={CBX} y2={Y_DIA2} label="YES" labelSide="left" />
-        <Arrow x1={CBX + CBW / 2} y1={Y_DIA2} x2={CBX + CBW / 2} y2={Y_MAG_BOX} />
         <Box x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* NO branch */}
-        <Arrow x1={DCX} y1={Y_DIA2 + DIA2_H / 2} x2={DCX} y2={Y_SECHDR} label="NO" />
+        <Arrow x1={DCX} y1={Y_DIA2 + DIA2_H / 2} x2={DCX} y2={Y_SECHDR} label="NO" labelSide="right" />
 
         {/* Step 4 section header + header bar */}
         <SectionHeader x={BX} y={Y_SECHDR} w={BW} text="Step 4 · Administer Benzodiazepine · Paramedic" />
@@ -344,12 +341,12 @@ export default function SeizureFlowchart() {
         {/* ADULT column text */}
         <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 22} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="800">ADULT (age ≥ 15)</SvgText>
         <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 44} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam</SvgText>
-        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={11} fill={C.adultDose}>IM / IN: 0.2 mg/kg</SvgText>
-        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 10 mg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={13} fill={C.adultDose}>IM / IN: 0.2 mg/kg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={13} fill={C.adultDose}>max 10 mg</SvgText>
         <HRule x={BX + 10} y={Y_BENZOCOLS + 88} w={colW - 20} />
         <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 104} textAnchor="middle" fontSize={12} fill={C.adultDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
-        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={11} fill={C.adultDose}>IV / IO: 0.1 mg/kg</SvgText>
-        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={11} fill={C.adultDose}>max 4 mg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={13} fill={C.adultDose}>IV / IO: 0.1 mg/kg</SvgText>
+        <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={13} fill={C.adultDose}>max 4 mg</SvgText>
         <HRule x={BX + 10} y={Y_BENZOCOLS + 148} w={colW - 20} />
         <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 164} textAnchor="middle" fontSize={11} fill={'#d29922'} fontWeight="600">Age &gt; 60: reduce dose by half</SvgText>
         <SvgText x={BX + colW / 2} y={Y_BENZOCOLS + 180} textAnchor="middle" fontSize={11} fill={C.adultDose}>Slow over 2 min via IV/IO</SvgText>
@@ -357,12 +354,12 @@ export default function SeizureFlowchart() {
         {/* PEDS column text */}
         <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 22} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="800">PEDIATRIC (age &lt; 15)</SvgText>
         <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 44} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IM / IN: 0.2 mg/kg</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 10 mg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 60} textAnchor="middle" fontSize={13} fill={C.pedsDose}>IM / IN: 0.2 mg/kg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 75} textAnchor="middle" fontSize={13} fill={C.pedsDose}>max 10 mg</SvgText>
         <HRule x={BX + colW + 10 + 10} y={Y_BENZOCOLS + 88} w={colW - 20} />
         <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 104} textAnchor="middle" fontSize={12} fill={C.pedsDrug} fontWeight="700">Midazolam or Lorazepam</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={11} fill={C.pedsDose}>IV / IO: 0.1 mg/kg</SvgText>
-        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={11} fill={C.pedsDose}>max 4 mg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 120} textAnchor="middle" fontSize={13} fill={C.pedsDose}>IV / IO: 0.1 mg/kg</SvgText>
+        <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 135} textAnchor="middle" fontSize={13} fill={C.pedsDose}>max 4 mg</SvgText>
         <HRule x={BX + colW + 10 + 10} y={Y_BENZOCOLS + 148} w={colW - 20} />
         <SvgText x={BX + colW + 10 + colW / 2} y={Y_BENZOCOLS + 164} textAnchor="middle" fontSize={11} fill={C.pedsDose} fontWeight="600">Slow over 2 min via IV/IO</SvgText>
 
@@ -375,15 +372,13 @@ export default function SeizureFlowchart() {
 
         {/* YES branch */}
         <Arrow x1={DCX + DW / 2} y1={Y_DIA3} x2={CBX} y2={Y_DIA3} label="YES" labelSide="left" />
-        <Arrow x1={CBX + CBW / 2} y1={Y_DIA3} x2={CBX + CBW / 2} y2={Y_POSTICTAL_BOX} />
         <Box x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} rx={8} />
 
         {/* NO branch */}
         <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={DCX} y2={Y_STEP5} label="NO" labelSide="right" />
 
         {/* Step 5 shape */}
-        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder}
-          hasBadge badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder} />
+        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder} />
 
         <Arrow x1={DCX} y1={Y_STEP5 + STEP_H} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
 
@@ -394,15 +389,13 @@ export default function SeizureFlowchart() {
 
         {/* NO branch */}
         <Arrow x1={DCX + DW / 2} y1={Y_DIA4} x2={CBX} y2={Y_DIA4} label="NO" labelSide="left" />
-        <Arrow x1={CBX + CBW / 2} y1={Y_DIA4} x2={CBX + CBW / 2} y2={Y_MEDDIR_BOX} />
         <Box x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} rx={8} />
 
         {/* YES branch */}
         <Arrow x1={DCX} y1={Y_DIA4 + DIA4_H / 2} x2={DCX} y2={Y_STEP6} label="YES" />
 
         {/* Step 6 shape */}
-        <StepBox x={BX} y={Y_STEP6} w={BW} h={STEP6_H} fill={C.paraBg} stroke={C.paraBorder}
-          hasBadge badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
+        <StepBox x={BX} y={Y_STEP6} w={BW} h={STEP6_H} fill={C.paraBg} stroke={C.paraBorder} />
 
         <Arrow x1={cx} y1={Y_STEP6 + STEP6_H} x2={cx} y2={Y_STEP7} />
 

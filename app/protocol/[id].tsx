@@ -32,7 +32,7 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
 };
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const FLOWCHART_W = SCREEN_W;
+const FLOWCHART_W = 540;
 const INITIAL_SCALE = (SCREEN_W) / FLOWCHART_W;
 
 export default function ProtocolViewer() {
