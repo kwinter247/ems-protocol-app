@@ -189,7 +189,8 @@ function BoxLabel({ x, y, w, h, lines, textColor, fontSize = 14, badge, badgeCol
 }
 
 interface StepBoxLabelProps {
-  x: number; y: number; w: number; h: number;
+  x: number; y: number; w: number;
+  fill: string; stroke: string;
   stepLabel: string; title: string; subtitle?: string;
   titleColor: string; subtitleColor: string;
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
@@ -197,9 +198,9 @@ interface StepBoxLabelProps {
   titleFontSize?: number;
 }
 
-function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14, titleFontSize = 16 }: StepBoxLabelProps) {
+function StepBoxLabel({ x, y, w, fill, stroke, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14, titleFontSize = 16 }: StepBoxLabelProps) {
   return (
-    <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
+    <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, backgroundColor: fill, borderWidth: 1.5, borderColor: stroke, borderRadius: 10 }]}>
       <View style={[styles.stepCenter, { paddingRight: badge ? 60 : 16 }]}>
         <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3 }}>
           {stepLabel}
@@ -288,13 +289,7 @@ export default function SeizureFlowchart() {
 
         <Arrow x1={cx} y1={Y_INCL + INCL_H} x2={cx} y2={Y_STEP1} />
 
-        {/* Step 1 shape */}
-        <StepBox x={BX} y={Y_STEP1} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
-
         <Arrow x1={cx} y1={Y_STEP1 + STEP_H} x2={cx} y2={Y_STEP2} />
-
-        {/* Step 2 shape */}
-        <StepBox x={BX} y={Y_STEP2} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
 
         <Arrow x1={DCX} y1={Y_STEP2 + STEP_H} x2={DCX} y2={Y_DIA1 - DIA1_H / 2} />
 
@@ -309,9 +304,6 @@ export default function SeizureFlowchart() {
 
         {/* NO branch */}
         <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} label="NO" labelSide="right" />
-
-        {/* Step 3 shape */}
-        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder} />
 
         <Arrow x1={DCX} y1={Y_STEP3 + STEP_H} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
 
@@ -377,9 +369,6 @@ export default function SeizureFlowchart() {
         {/* NO branch */}
         <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={DCX} y2={Y_STEP5} label="NO" labelSide="right" />
 
-        {/* Step 5 shape */}
-        <StepBox x={BX} y={Y_STEP5} w={BW} h={STEP_H} fill={C.critBg} stroke={C.critBorder} />
-
         <Arrow x1={DCX} y1={Y_STEP5 + STEP_H} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
 
         {/* Diamond: Seizure stopped? (2) */}
@@ -394,13 +383,7 @@ export default function SeizureFlowchart() {
         {/* YES branch */}
         <Arrow x1={DCX} y1={Y_DIA4 + DIA4_H / 2} x2={DCX} y2={Y_STEP6} label="YES" />
 
-        {/* Step 6 shape */}
-        <StepBox x={BX} y={Y_STEP6} w={BW} h={STEP6_H} fill={C.paraBg} stroke={C.paraBorder} />
-
         <Arrow x1={cx} y1={Y_STEP6 + STEP6_H} x2={cx} y2={Y_STEP7} />
-
-        {/* Step 7 shape */}
-        <StepBox x={BX} y={Y_STEP7} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
 
         <Arrow x1={cx} y1={Y_STEP7 + STEP_H} x2={cx} y2={Y_PREGNOTE} />
 
@@ -425,7 +408,7 @@ export default function SeizureFlowchart() {
         textColor={C.inclText} fontSize={12} />
 
       {/* Step 1 */}
-      <StepBoxLabel x={BX} y={Y_STEP1} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP1} w={BW} fill={C.emtBg} stroke={C.emtBorder}
         stepLabel="STEP 1"
         title="Initiate Universal Care"
         subtitle="Airway support · AVPU/GCS · O₂ as needed"
@@ -434,7 +417,7 @@ export default function SeizureFlowchart() {
         subtitleFontSize={10} />
 
       {/* Step 2 */}
-      <StepBoxLabel x={BX} y={Y_STEP2} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP2} w={BW} fill={C.emtBg} stroke={C.emtBorder}
         stepLabel="STEP 2"
         title="Check Blood Glucose"
         subtitle="Fingerstick BGL · If pregnant → left lateral recumbent"
@@ -448,7 +431,7 @@ export default function SeizureFlowchart() {
         textColor={C.destText} fontSize={11} />
 
       {/* Step 3 */}
-      <StepBoxLabel x={BX} y={Y_STEP3} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP3} w={BW} fill={C.paraBg} stroke={C.paraBorder}
         stepLabel="STEP 3"
         title={"IV/IO Access\n+ Cardiac & EtCO₂ Monitoring"}
         subtitle="Establish access · Continuous monitoring"
@@ -462,7 +445,7 @@ export default function SeizureFlowchart() {
         textColor={C.destText} fontSize={11} />
 
       {/* Step 5 */}
-      <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP5} w={BW} fill={C.critBg} stroke={C.critBorder}
         stepLabel="STEP 5"
         title={"Repeat Benzodiazepine\n1 repeat dose max"}
         subtitle={"Same drug and dose · Max 2 total doses\nKetamine NOT indicated postictal"}
@@ -481,7 +464,7 @@ export default function SeizureFlowchart() {
         textColor={C.destText} fontSize={12} />
 
       {/* Step 6 */}
-      <StepBoxLabel x={BX} y={Y_STEP6} w={BW} h={STEP6_H}
+      <StepBoxLabel x={BX} y={Y_STEP6} w={BW} fill={C.paraBg} stroke={C.paraBorder}
         stepLabel="STEP 6"
         title="Postictal Care"
         subtitle={"Maintain airway · positioning · continuous monitoring\nIf agitation: refer to Agitated/Violent Patient protocol\nKetamine NOT indicated postictal"}
@@ -490,7 +473,7 @@ export default function SeizureFlowchart() {
         subtitleFontSize={11} />
 
       {/* Step 7 */}
-      <StepBoxLabel x={BX} y={Y_STEP7} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP7} w={BW} fill={C.emtBg} stroke={C.emtBorder}
         stepLabel="STEP 7"
         title="Transport"
         subtitle="Notify Receiving Facility · ALS intercept if not on scene"
@@ -518,11 +501,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   stepCenter: {
-    flex: 1,
-    justifyContent: 'center',
     paddingLeft: 16,
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingVertical: 10,
   },
   badgeAbs: {
     position: 'absolute',
