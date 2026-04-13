@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 120;
+const STEP_H = 110;
 const STEP5_H = 150;
 
 // ── Colour tokens ──────────────────────────────────────────────
@@ -251,7 +251,7 @@ const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
 const Y_DIA4         = Y_STEP5 + STEP5_H + 30 + 50; // (Seizure stopped? 2 cy)
 const DIA4_H         = 100;
 const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
-const STEP6_H        = 170; // taller — 3 lines of content
+const STEP6_H        = 145; // taller — 3 lines of content
 const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
 const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
 const PREG_H         = 80;
@@ -465,7 +465,7 @@ export default function SeizureFlowchart() {
       {/* Step 5 */}
       <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP5_H}
         stepLabel="STEP 5"
-        title="Repeat Benzodiazepine — 1 repeat dose max"
+        title={"Repeat Benzodiazepine —\n1 repeat dose max"}
         subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
         titleColor={C.critTitle} subtitleColor={'#e6b87a'}
         badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder}
@@ -522,8 +522,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingLeft: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   badgeAbs: {
     position: 'absolute',
