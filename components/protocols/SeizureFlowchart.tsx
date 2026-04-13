@@ -195,16 +195,17 @@ interface StepBoxLabelProps {
   titleColor: string; subtitleColor: string;
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
   subtitleFontSize?: number;
+  titleFontSize?: number;
 }
 
-function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14 }: StepBoxLabelProps) {
+function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14, titleFontSize = 16 }: StepBoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
       <View style={[styles.stepCenter, { paddingRight: badge ? 120 : 16 }]}>
         <Text style={{ color: subtitleColor, fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 3 }}>
           {stepLabel}
         </Text>
-        <Text style={{ color: titleColor, fontSize: 16, fontWeight: '800' }}>
+        <Text style={{ color: titleColor, fontSize: titleFontSize, fontWeight: '800' }}>
           {title}
         </Text>
         {subtitle && (
@@ -250,7 +251,7 @@ const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
 const Y_DIA4         = Y_STEP5 + STEP5_H + 30 + 50; // (Seizure stopped? 2 cy)
 const DIA4_H         = 100;
 const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
-const STEP6_H        = 200; // taller — 4 lines of content
+const STEP6_H        = 170; // taller — 3 lines of content
 const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
 const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
 const PREG_H         = 80;
@@ -468,7 +469,7 @@ export default function SeizureFlowchart() {
         subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
         titleColor={C.critTitle} subtitleColor={'#e6b87a'}
         badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder}
-        subtitleFontSize={11} />
+        titleFontSize={15} subtitleFontSize={11} />
 
       {/* Postictal side box */}
       <BoxLabel x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46}
@@ -493,10 +494,10 @@ export default function SeizureFlowchart() {
       <StepBoxLabel x={BX} y={Y_STEP7} w={BW} h={STEP_H}
         stepLabel="STEP 7"
         title="Transport"
-        subtitle="Notify Receiving Facility · ALS intercept if not already on scene"
+        subtitle="Notify Receiving Facility · ALS intercept if not on scene"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="ALL PROVIDERS" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder}
-        subtitleFontSize={11} />
+        subtitleFontSize={10} />
 
       {/* Pregnancy Note */}
       <BoxLabel x={BX} y={Y_PREGNOTE} w={BW} h={PREG_H}
