@@ -4,69 +4,62 @@ Last updated: April 12, 2026
 ## Stack
 - React Native + Expo SDK 54, Expo Router
 - react-native-svg for flowcharts
-- Supabase + Claude API for Scenario AI
+- Supabase + Claude API for Scenario AI (not yet needed)
 - Repo: github.com/kwinter247/ems-protocol-app
 - Local: C:\Users\KyleW\ems-protocol-app
 - Dev server: npx expo start (port auto-assigned)
 - Testing: Expo Go on Android
 
 ## Current Architecture: SeizureFlowchart.tsx
-- SVG layer renders all shapes, arrows, lines
-- RN View/Text overlay layer renders all text (foreignObject unsupported on Android)
-- StepBoxLabel component: left-aligned text, vertically centered, 100px height
-- BoxLabel component: center-aligned text, vertically centered
-- Canvas W=540, FLOWCHART_W=SCREEN_W in viewer
-- Diamond center DCX = BX + DW/2 (left-shifted, not canvas center)
-- Callout boxes: CBX = BR - CBW, flush with main box right edge
+- SVG layer renders shapes, arrows, lines only — NO text in SVG for boxes
+- RN View/Text overlay layer renders ALL box text (foreignObject unsupported on Android)
+- StepBoxLabel: left-aligned text, vertically centered, paddingLeft 16
+- BoxLabel: center-aligned text, vertically centered
+- Badge rendering ONLY from StepBoxLabel overlay — never from SVG StepBox shape
+- All StepBox SVG shapes have NO hasBadge prop
 
 ## Key Layout Constants (SeizureFlowchart.tsx)
-- W = 540 (canvas width)
-- BW = 390 (main box width)
-- BX = 75 (box left edge)
-- BR = 465 (box right edge)  
-- DW = 240 (diamond width)
-- DCX = BX + DW/2 = 195 (diamond center)
-- CBW = 110 (callout box width)
-- CBX = BR - CBW = 355 (callout box left edge)
-- STEP_H = 100
+- W = 540, H = 3800
+- BW = 390, BX = 75, BR = 465
+- DW = 240, DCX = BX + DW/2 = 195
+- CBW = 110, CBX = BR - CBW = 355
+- STEP_H = 130, STEP6_H = 200
+- BENZO_COL_H = 220
 
 ## Viewer: app/protocol/[id].tsx
-- FLOWCHART_W = SCREEN_W (fills screen width)
-- FLOWCHART_H = 3800
+- FLOWCHART_W = 540, FLOWCHART_H = 3800
+- INITIAL_SCALE = SCREEN_W / FLOWCHART_W
 - Transform order: scale first, then translate
-- Initial translateX = 0 (no offset needed at scale=1)
+- translateX = 0, translateY = 0 at initial load
 - Pinch/pan gestures via react-native-gesture-handler
 
+## SeizureFlowchart Status: NEARLY COMPLETE
+Remaining fixes needed:
+1. Step 5 PARAMEDIC badge still showing double border — SVG rect 
+   near Y_STEP5 with x={BX + BW - 112} still exists, needs deletion
+2. Step 6 PARAMEDIC badge same issue
+3. Arrow pointing into "→ Hypoglycemia protocol" text in callout box 
+   — remove the → from the BoxLabel text, it's redundant with the arrow
+4. Verify pregnancy note and disclaimer render at bottom
+
 ## Completed Work
-- SeizureFlowchart.tsx fully built with all 7 steps
+- Full 7-step seizure flowchart built and rendering
 - SVG text → RN overlay rewrite (Android foreignObject fix)
-- Layout shifted: diamonds left-aligned, callouts flush right
-- YES/NO labels on horizontal branch arrows
+- Diamond geometry: DCX left-shifted, callouts flush with BR
+- YES/NO labels on arrows working
+- All callout boxes inside canvas bounds
+- Badge double-border fixed on Steps 1, 2, 3, 7
+- Benzo column font increased to 13px
 - Screen-filling scale on load
 
-## Remaining Tasks (in priority order)
+## Remaining Tasks (after SeizureFlowchart complete)
 1. Fix Android nav bar covering bottom tabs
-2. Replace 24-drug dataset with 40-drug Red Book dataset
-3. Build Stroke/TIA flowchart (use SeizureFlowchart as template)
+2. Replace 24-drug dataset with 40-drug Red Book dataset  
+3. Build Stroke/TIA flowchart (clone SeizureFlowchart as template)
 4. Build Cardiac Arrest flowchart
 5. EAS Build / App Store submission
 
-## Active Punch List
-1. Chart not filling screen correctly (FLOWCHART_W reverted to 540)
-2. NO label should be right of arrow not above it
-3. Double badge border on Steps 3, 5, 6 — fix in progress
-4. Remove extra arrows above callout boxes
-5. Benzo font size increase to 13
-6. Step 5 and 6 need more height
-7. Callout box vertical drop arrows removed
-
-## Known Issues
-- Step 2 subtitle wraps to 2 lines (box slightly narrow for long text)
-- Step 3 title wraps to 2 lines at current font size
-
-## Decisions Made
-- Left-aligned text in StepBoxes (cleaner than centered)
-- Title 17px, subtitle 14px
-- Dark theme with color-coded protocol types (EMT=grey, Paramedic=green, Critical=orange)
-- Diamonds narrower than boxes to make room for callout boxes
-- SeizureFlowchart.tsx is the template for all future protocol flowcharts
+## How to Resume in New Chat
+Paste this file contents and say: "Continue EMS protocol app development.
+Read CLAUDE_SESSION.md and pick up where we left off."
+Or fetch from: github.com/kwinter247/ems-protocol-app/blob/main/CLAUDE_SESSION.md
