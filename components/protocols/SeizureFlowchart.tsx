@@ -194,9 +194,10 @@ interface StepBoxLabelProps {
   stepLabel: string; title: string; subtitle?: string;
   titleColor: string; subtitleColor: string;
   badge?: string; badgeColor?: string; badgeBg?: string; badgeBorder?: string;
+  subtitleFontSize?: number;
 }
 
-function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder }: StepBoxLabelProps) {
+function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subtitleColor, badge, badgeColor, badgeBg, badgeBorder, subtitleFontSize = 14 }: StepBoxLabelProps) {
   return (
     <View pointerEvents="none" style={[styles.abs, { left: x, top: y, width: w, height: h }]}>
       <View style={[styles.stepCenter, { paddingRight: badge ? 120 : 16 }]}>
@@ -207,7 +208,7 @@ function StepBoxLabel({ x, y, w, h, stepLabel, title, subtitle, titleColor, subt
           {title}
         </Text>
         {subtitle && (
-          <Text style={{ color: subtitleColor, fontSize: 13, fontWeight: '400', marginTop: 3 }}>
+          <Text style={{ color: subtitleColor, fontSize: subtitleFontSize, fontWeight: '400', marginTop: 3 }}>
             {subtitle}
           </Text>
         )}
@@ -450,7 +451,8 @@ export default function SeizureFlowchart() {
         title={"IV/IO Access\n+ Cardiac & EtCO₂ Monitoring"}
         subtitle="Establish access · Continuous monitoring"
         titleColor={C.paraTitle} subtitleColor={C.paraSub}
-        badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder} />
+        badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder}
+        subtitleFontSize={12} />
 
       {/* Mag Sulfate side box */}
       <BoxLabel x={CBX} y={Y_MAG_BOX} w={CBW} h={88}
