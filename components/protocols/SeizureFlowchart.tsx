@@ -257,8 +257,8 @@ const Y_DISC         = Y_PREGNOTE + PREG_H + 20;    // 1876
 // Side box Y positions
 const Y_HYPO_BOX     = Y_DIA1 - 28;                 // aligned to diamond
 const Y_MAG_BOX      = Y_DIA2 - 44;
-const Y_POSTICTAL_BOX = Y_DIA3 + DIA3_H / 2 - 23 + 54;
-const Y_MEDDIR_BOX   = Y_DIA4 + DIA4_H / 2 - 23 + 54;
+const Y_POSTICTAL_BOX = Y_DIA3 - 23;
+const Y_MEDDIR_BOX   = Y_DIA4 - 23;
 
 const TOTAL_H = Y_DISC + 60;
 
