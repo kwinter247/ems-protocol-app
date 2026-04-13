@@ -18,6 +18,7 @@ const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
 const STEP_H = 140;
+const STEP3_H = 170;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -234,7 +235,7 @@ const Y_STEP2        = Y_STEP1 + STEP_H + 24;       // 292
 const Y_DIA1         = Y_STEP2 + STEP_H + 30 + 50;  // 472  (BGL diamond cy)
 const DIA1_H         = 100;
 const Y_STEP3        = Y_DIA1 + DIA1_H / 2 + 26;    // 548
-const Y_DIA2         = Y_STEP3 + STEP_H + 30 + 60;  // 738  (Pregnant diamond cy)
+const Y_DIA2         = Y_STEP3 + STEP3_H + 30 + 60; // (Pregnant diamond cy)
 const DIA2_H         = 120;
 const Y_SECHDR       = Y_DIA2 + DIA2_H / 2 + 26;    // 824
 const Y_BENZOHDR     = Y_SECHDR + 24 + 4;            // 852
@@ -309,9 +310,9 @@ export default function SeizureFlowchart() {
         <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} label="NO" labelSide="right" />
 
         {/* Step 3 shape */}
-        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP_H} fill={C.paraBg} stroke={C.paraBorder} />
+        <StepBox x={BX} y={Y_STEP3} w={BW} h={STEP3_H} fill={C.paraBg} stroke={C.paraBorder} />
 
-        <Arrow x1={DCX} y1={Y_STEP3 + STEP_H} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
+        <Arrow x1={DCX} y1={Y_STEP3 + STEP3_H} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
 
         {/* Diamond: Pregnant? */}
         <Diamond cx={DCX} cy={Y_DIA2} w={DW} h={DIA2_H}
@@ -444,7 +445,7 @@ export default function SeizureFlowchart() {
         textColor={C.destText} fontSize={11} />
 
       {/* Step 3 */}
-      <StepBoxLabel x={BX} y={Y_STEP3} w={BW} h={STEP_H}
+      <StepBoxLabel x={BX} y={Y_STEP3} w={BW} h={STEP3_H}
         stepLabel="STEP 3"
         title={"IV/IO Access\n+ Cardiac & EtCO₂ Monitoring"}
         subtitle="Establish access · Continuous monitoring"
