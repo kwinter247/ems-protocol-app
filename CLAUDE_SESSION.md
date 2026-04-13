@@ -1,5 +1,5 @@
 # EMS Protocol App — Claude Session State
-Last updated: April 12, 2026
+Last updated: April 12, 2026 (evening)
 
 ## Stack
 - React Native + Expo SDK 54, Expo Router
@@ -23,7 +23,7 @@ Last updated: April 12, 2026
 - BW = 390, BX = 75, BR = 465
 - DW = 240, DCX = BX + DW/2 = 195
 - CBW = 110, CBX = BR - CBW = 355
-- STEP_H = 130, STEP6_H = 200
+- STEP_H = 120, STEP6_H = 200
 - BENZO_COL_H = 220
 
 ## Viewer: app/protocol/[id].tsx
@@ -34,13 +34,9 @@ Last updated: April 12, 2026
 - Pinch/pan gestures via react-native-gesture-handler
 
 ## SeizureFlowchart Status: NEARLY COMPLETE
-Remaining fixes needed:
-1. Step 5 PARAMEDIC badge still showing double border — SVG rect 
-   near Y_STEP5 with x={BX + BW - 112} still exists, needs deletion
-2. Step 6 PARAMEDIC badge same issue
-3. Arrow pointing into "→ Hypoglycemia protocol" text in callout box 
-   — remove the → from the BoxLabel text, it's redundant with the arrow
-4. Verify pregnancy note and disclaimer render at bottom
+Remaining minor work:
+- Verify pregnancy note and disclaimer render cleanly at bottom
+- On-device test to confirm no text wrapping in any step box
 
 ## Completed Work
 - Full 7-step seizure flowchart built and rendering
@@ -48,9 +44,14 @@ Remaining fixes needed:
 - Diamond geometry: DCX left-shifted, callouts flush with BR
 - YES/NO labels on arrows working
 - All callout boxes inside canvas bounds
-- Badge double-border fixed on Steps 1, 2, 3, 7
+- Badge SVG rect removed from all StepBox shapes — badge only from overlay
 - Benzo column font increased to 13px
 - Screen-filling scale on load
+- subtitleFontSize prop on StepBoxLabel: 12 for Steps 1,3,7; 11 for Steps 2,5,7; 10 for Step 6
+- stepCenter style: paddingTop/Bottom 8 added
+- stepLabel simplified: "STEP 5", "STEP 6" (no · PARAMEDIC suffix)
+- Step 7 title shortened to "Transport", subtitle carries detail
+- Step 6 subtitle flattened to single line at fontSize 10
 
 ## Remaining Tasks (after SeizureFlowchart complete)
 1. Fix Android nav bar covering bottom tabs

@@ -462,7 +462,7 @@ export default function SeizureFlowchart() {
 
       {/* Step 5 */}
       <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP_H}
-        stepLabel="STEP 5 · PARAMEDIC"
+        stepLabel="STEP 5"
         title="Repeat Benzodiazepine — 1 repeat dose max"
         subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
         titleColor={C.critTitle} subtitleColor={'#e6b87a'}
@@ -481,21 +481,21 @@ export default function SeizureFlowchart() {
 
       {/* Step 6 */}
       <StepBoxLabel x={BX} y={Y_STEP6} w={BW} h={STEP6_H}
-        stepLabel="STEP 6 · PARAMEDIC"
+        stepLabel="STEP 6"
         title="Postictal Care"
-        subtitle={"Maintain airway · positioning · continuous monitoring\nIf agitation: refer to Agitated/Violent Patient protocol\nKetamine NOT indicated postictal"}
+        subtitle="Maintain airway · positioning · continuous monitoring · If agitation: refer to Agitated/Violent Patient protocol · Ketamine NOT indicated postictal"
         titleColor={C.paraTitle} subtitleColor={C.paraSub}
         badge="PARAMEDIC" badgeColor={C.paraTitle} badgeBg="rgba(15,110,86,0.15)" badgeBorder={C.paraBorder}
-        subtitleFontSize={11} />
+        subtitleFontSize={10} />
 
       {/* Step 7 */}
       <StepBoxLabel x={BX} y={Y_STEP7} w={BW} h={STEP_H}
         stepLabel="STEP 7"
-        title="Transport — Notify Receiving Facility"
-        subtitle="ALS intercept if not already on scene"
+        title="Transport"
+        subtitle="Notify Receiving Facility · ALS intercept if not already on scene"
         titleColor={C.emtTitle} subtitleColor={C.emtSub}
         badge="ALL PROVIDERS" badgeColor={C.emtTitle} badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder}
-        subtitleFontSize={12} />
+        subtitleFontSize={11} />
 
       {/* Pregnancy Note */}
       <BoxLabel x={BX} y={Y_PREGNOTE} w={BW} h={PREG_H}
