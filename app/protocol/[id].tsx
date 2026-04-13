@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -19,7 +20,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const FLOWCHART_H = 3800;
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 3.0;
 const ZOOM_STEP = 0.25;
@@ -32,7 +32,7 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
 };
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const FLOWCHART_W = 540;
+const FLOWCHART_W = 470;
 const INITIAL_SCALE = (SCREEN_W) / FLOWCHART_W;
 
 export default function ProtocolViewer() {
@@ -42,17 +42,6 @@ export default function ProtocolViewer() {
 
   const scale = useSharedValue(INITIAL_SCALE);
   const savedScale = useSharedValue(INITIAL_SCALE);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const savedX = useSharedValue(0);
-  const savedY = useSharedValue(0);
-  const originX = useSharedValue(0);
-  const originY = useSharedValue(0);
-
-  useEffect(() => {
-    translateX.value = 0;
-    savedX.value = 0;
-  }, []);
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
@@ -63,24 +52,8 @@ export default function ProtocolViewer() {
       savedScale.value = scale.value;
     });
 
-  const panGesture = Gesture.Pan()
-    .onUpdate((e) => {
-      translateX.value = savedX.value + e.translationX;
-      translateY.value = savedY.value + e.translationY;
-    })
-    .onEnd(() => {
-      savedX.value = translateX.value;
-      savedY.value = translateY.value;
-    });
-
-  const composed = Gesture.Simultaneous(pinchGesture, panGesture);
-
   const animStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-    ],
+    transform: [{ scale: scale.value }],
   }));
 
   const zoomIn = () => {
@@ -98,10 +71,6 @@ export default function ProtocolViewer() {
   const resetZoom = () => {
     scale.value = withTiming(INITIAL_SCALE, { duration: 250 });
     savedScale.value = INITIAL_SCALE;
-    translateX.value = withTiming(0, { duration: 250 });
-    translateY.value = withTiming(0, { duration: 250 });
-    savedX.value = 0;
-    savedY.value = 0;
   };
 
   return (
@@ -130,17 +99,23 @@ export default function ProtocolViewer() {
 
       {/* Hint */}
       <View style={styles.hint}>
-        <Text style={styles.hintText}>Pinch to zoom · Drag to pan · Use buttons to reset</Text>
+        <Text style={styles.hintText}>Scroll to navigate · Pinch to zoom</Text>
       </View>
 
       {/* Canvas */}
-      <View style={styles.canvas}>
-        <GestureDetector gesture={composed}>
+      <GestureDetector gesture={pinchGesture}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          overScrollMode="never"
+        >
           <Animated.View style={[styles.svgWrapper, animStyle]}>
             <SeizureFlowchart />
           </Animated.View>
-        </GestureDetector>
-      </View>
+        </ScrollView>
+      </GestureDetector>
     </SafeAreaView>
   );
 }
@@ -209,14 +184,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.3,
   },
-  canvas: {
+  scrollView: {
     flex: 1,
-    overflow: 'hidden',
+    width: '100%',
     backgroundColor: colors.background,
+  },
+  scrollContent: {
+    alignItems: 'center',
   },
   svgWrapper: {
     width: FLOWCHART_W,
-    height: FLOWCHART_H,
-    transformOrigin: 'top left',
+    transformOrigin: 'top center',
   },
 });
