@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 110;
+const STEP_H = 100;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -465,7 +465,7 @@ export default function SeizureFlowchart() {
       <StepBoxLabel x={BX} y={Y_STEP5} w={BW} h={STEP_H}
         stepLabel="STEP 5"
         title={"Repeat Benzodiazepine\n1 repeat dose max"}
-        subtitle="Same drug and dose · Max 2 total doses · Ketamine NOT indicated postictal"
+        subtitle={"Same drug and dose · Max 2 total doses\nKetamine NOT indicated postictal"}
         titleColor={C.critTitle} subtitleColor={'#e6b87a'}
         badge="PARAMEDIC" badgeColor={C.critTitle} badgeBg="rgba(42,26,10,0.4)" badgeBorder={C.critBorder}
         titleFontSize={17} subtitleFontSize={11} />
