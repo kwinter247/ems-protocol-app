@@ -69,6 +69,30 @@ Remaining work:
 - All arrow gaps standardized to 24px
 - SectionHeader font increased to 13px
 
+## Planned Architecture Rebuild: SeizureFlowchart.tsx
+
+Current problem: Step boxes use dynamic RN View heights but SVG
+diamonds/arrows use fixed Y coordinate constants. When box content
+changes height, diamonds get mispositioned or covered.
+
+New architecture:
+- Step boxes: pure RN Views stacked vertically in a flex column.
+  No fixed heights. PaddingVertical handles spacing. RN handles
+  layout automatically.
+- Diamonds, arrows, lines, callout boxes: remain in SVG but will
+  be positioned using onLayout measurements from the RN step boxes,
+  OR rendered as RN Views too (diamonds can be rotated squares).
+- Overall container: vertical ScrollView with consistent spacing
+  constants, not a fixed pixel canvas.
+- No STEP_H, STEP6_H, or Y_* coordinate constants.
+- Every future protocol flowchart clones this same structure and
+  just changes content — no coordinate math needed.
+
+Before rebuild: copy current file to SeizureFlowchart_v1_backup.tsx
+
+Preserve exactly: all colors, fonts, badge system, content,
+color-coded step types (EMT/Paramedic/Critical), callout boxes.
+
 ## Remaining Tasks (after SeizureFlowchart complete)
 1. Fix Android nav bar covering bottom tabs
 2. Replace 24-drug dataset with 40-drug Red Book dataset
