@@ -147,7 +147,7 @@ function SectionHeader({ x, y, w, text }: { x: number; y: number; w: number; tex
   return (
     <G>
       <Rect x={x} y={y} width={w} height={24} fill={C.secBg} rx={4} />
-      <SvgText x={x + w / 2} y={y + 17} textAnchor="middle" fontSize={10} fill={C.secText} fontWeight="700" letterSpacing={1.2}>
+      <SvgText x={x + w / 2} y={y + 17} textAnchor="middle" fontSize={13} fill={C.secText} fontWeight="700" letterSpacing={1.2}>
         {text.toUpperCase()}
       </SvgText>
     </G>
@@ -233,24 +233,24 @@ const Y_TITLE        = 38;
 const Y_INCL         = 72;
 const INCL_H         = 72;
 const Y_STEP1        = Y_INCL + INCL_H + 24;       // 168
-const Y_STEP2        = Y_STEP1 + STEP_H + 24;       // 292
-const Y_DIA1         = Y_STEP2 + STEP_H + 30 + 50;  // 472  (BGL diamond cy)
+const Y_STEP2        = Y_STEP1 + STEP_H + 24;
+const Y_DIA1         = Y_STEP2 + STEP_H + 24 + 50;  // +24 gap + DIA1_H/2
 const DIA1_H         = 100;
-const Y_STEP3        = Y_DIA1 + DIA1_H / 2 + 26;    // 548
-const Y_DIA2         = Y_STEP3 + STEP_H + 30 + 60;  // (Pregnant diamond cy)
+const Y_STEP3        = Y_DIA1 + DIA1_H / 2 + 24;
+const Y_DIA2         = Y_STEP3 + STEP_H + 24 + 60;  // +24 gap + DIA2_H/2
 const DIA2_H         = 120;
-const Y_SECHDR       = Y_DIA2 + DIA2_H / 2 + 26;    // 824
-const Y_BENZOHDR     = Y_SECHDR + 24 + 4;            // 852
+const Y_SECHDR       = Y_DIA2 + DIA2_H / 2 + 24;
+const Y_BENZOHDR     = Y_SECHDR + 24 + 4;
 const BENZOHDR_H     = 40;
-const Y_BENZOCOLS    = Y_BENZOHDR + BENZOHDR_H + 4;  // 900
+const Y_BENZOCOLS    = Y_BENZOHDR + BENZOHDR_H + 4;
 const BENZO_COL_H    = 220;
-const Y_BENZOBOTTOM  = Y_BENZOCOLS + BENZO_COL_H;    // 1100
-const Y_DIA3         = Y_BENZOBOTTOM + 26 + 50;      // 1176  (Seizure stopped? 1 cy)
+const Y_BENZOBOTTOM  = Y_BENZOCOLS + BENZO_COL_H;
+const Y_DIA3         = Y_BENZOBOTTOM + 24 + 50;     // +24 gap + DIA3_H/2
 const DIA3_H         = 100;
-const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 26;    // 1252
-const Y_DIA4         = Y_STEP5 + STEP_H + 30 + 50;  // (Seizure stopped? 2 cy)
+const Y_STEP5        = Y_DIA3 + DIA3_H / 2 + 24;
+const Y_DIA4         = Y_STEP5 + STEP_H + 24 + 50;  // +24 gap + DIA4_H/2
 const DIA4_H         = 100;
-const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 26;    // 1508
+const Y_STEP6        = Y_DIA4 + DIA4_H / 2 + 24;
 const STEP6_H        = 125; // 3 subtitle lines + title + step label
 const Y_STEP7        = Y_STEP6 + STEP6_H + 24;      // 1652
 const Y_PREGNOTE     = Y_STEP7 + STEP_H + 24;       // 1776
