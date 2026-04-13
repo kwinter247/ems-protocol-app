@@ -287,14 +287,12 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_INCL + INCL_H} x2={cx} y2={Y_STEP1} />
 
         {/* Step 1 shape */}
-        <StepBox x={BX} y={Y_STEP1} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
-          hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
+        <StepBox x={BX} y={Y_STEP1} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
 
         <Arrow x1={cx} y1={Y_STEP1 + STEP_H} x2={cx} y2={Y_STEP2} />
 
         {/* Step 2 shape */}
-        <StepBox x={BX} y={Y_STEP2} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
-          hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
+        <StepBox x={BX} y={Y_STEP2} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
 
         <Arrow x1={DCX} y1={Y_STEP2 + STEP_H} x2={DCX} y2={Y_DIA1 - DIA1_H / 2} />
 
@@ -400,8 +398,7 @@ export default function SeizureFlowchart() {
         <Arrow x1={cx} y1={Y_STEP6 + STEP6_H} x2={cx} y2={Y_STEP7} />
 
         {/* Step 7 shape */}
-        <StepBox x={BX} y={Y_STEP7} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder}
-          hasBadge badgeBg="rgba(72,79,88,0.2)" badgeBorder={C.emtBorder} />
+        <StepBox x={BX} y={Y_STEP7} w={BW} h={STEP_H} fill={C.emtBg} stroke={C.emtBorder} />
 
         <Arrow x1={cx} y1={Y_STEP7 + STEP_H} x2={cx} y2={Y_PREGNOTE} />
 
