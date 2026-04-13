@@ -17,7 +17,7 @@ const DW = 240;                 //      diamond width
 const DCX = BX + DW / 2;       // 195  diamond center X (left point = BX)
 const CBW = 110;                //      callout box width
 const CBX = BR - CBW;           //      callout box left edge (right edge = BR = 465)
-const STEP_H = 140;
+const STEP_H = 120;
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
@@ -520,6 +520,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingLeft: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
   badgeAbs: {
     position: 'absolute',
