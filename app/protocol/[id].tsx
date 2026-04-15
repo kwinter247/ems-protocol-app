@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import SeizureFlowchart from '@/components/protocols/SeizureFlowchart';
+import ChestPainFlowchart from '@/components/protocols/ChestPainFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -28,6 +29,10 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   seizures: {
     title: 'Seizures',
     subtitle: 'Adult & Pediatric',
+  },
+  'chest-pain': {
+    title: 'Chest Pain',
+    subtitle: 'Adult',
   },
 };
 
@@ -112,7 +117,7 @@ export default function ProtocolViewer() {
           overScrollMode="never"
         >
           <Animated.View style={[styles.svgWrapper, animStyle]}>
-            <SeizureFlowchart />
+            {id === 'chest-pain' ? <ChestPainFlowchart /> : <SeizureFlowchart />}
           </Animated.View>
         </ScrollView>
       </GestureDetector>

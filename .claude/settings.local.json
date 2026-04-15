@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls node_modules/.bin/tsc*)",
+      "Bash(npm install:*)",
+      "Bash(./node_modules/.bin/tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(npx expo:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(npm list:*)",
+      "Bash(npm uninstall:*)"
+    ]
+  }
+}

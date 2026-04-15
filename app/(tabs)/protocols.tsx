@@ -18,7 +18,16 @@ const PROTOCOLS = [
     category: 'Neurological',
     scope: 'Both',
   },
+  {
+    id: 'chest-pain',
+    title: 'Chest Pain',
+    subtitle: 'Adult',
+    category: 'Cardiovascular',
+    scope: 'Both',
+  },
 ];
+
+const CATEGORIES = ['Cardiovascular', 'Neurological'];
 
 const SCOPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   EMT: {
@@ -52,36 +61,42 @@ export default function ProtocolsScreen() {
           <Text style={styles.subtitle}>Central Arizona Red Book 2026</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Neurological</Text>
-          {PROTOCOLS.map((protocol) => {
-            const scopeStyle = SCOPE_COLORS[protocol.scope];
-            return (
-              <TouchableOpacity
-                key={protocol.id}
-                style={styles.card}
-                onPress={() => router.push(`/protocol/${protocol.id}` as any)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.cardLeft}>
-                  <View style={styles.iconBox}>
-                    <GitBranch size={18} color={colors.accent} />
-                  </View>
-                  <View style={styles.cardText}>
-                    <Text style={styles.cardTitle}>{protocol.title}</Text>
-                    <Text style={styles.cardSubtitle}>{protocol.subtitle}</Text>
-                  </View>
-                </View>
-                <View style={styles.cardRight}>
-                  <View style={[styles.scopeBadge, { backgroundColor: scopeStyle.bg, borderColor: scopeStyle.border }]}>
-                    <Text style={[styles.scopeText, { color: scopeStyle.text }]}>{protocol.scope}</Text>
-                  </View>
-                  <ChevronRight size={16} color={colors.textMuted} />
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {CATEGORIES.map((category) => {
+          const group = PROTOCOLS.filter((p) => p.category === category);
+          if (group.length === 0) return null;
+          return (
+            <View key={category} style={styles.section}>
+              <Text style={styles.sectionLabel}>{category}</Text>
+              {group.map((protocol) => {
+                const scopeStyle = SCOPE_COLORS[protocol.scope];
+                return (
+                  <TouchableOpacity
+                    key={protocol.id}
+                    style={styles.card}
+                    onPress={() => router.push(`/protocol/${protocol.id}` as any)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.cardLeft}>
+                      <View style={styles.iconBox}>
+                        <GitBranch size={18} color={colors.accent} />
+                      </View>
+                      <View style={styles.cardText}>
+                        <Text style={styles.cardTitle}>{protocol.title}</Text>
+                        <Text style={styles.cardSubtitle}>{protocol.subtitle}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.cardRight}>
+                      <View style={[styles.scopeBadge, { backgroundColor: scopeStyle.bg, borderColor: scopeStyle.border }]}>
+                        <Text style={[styles.scopeText, { color: scopeStyle.text }]}>{protocol.scope}</Text>
+                      </View>
+                      <ChevronRight size={16} color={colors.textMuted} />
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        })}
 
         <Text style={styles.footer}>
           Tap a protocol to view the full flowchart. Pinch to zoom, drag to pan.
