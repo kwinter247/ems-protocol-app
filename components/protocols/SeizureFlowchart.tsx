@@ -320,7 +320,12 @@ export default function SeizureFlowchart() {
               <SvgBox x={CBX} y={Y_HYPO_BOX} w={CBW} h={56} fill={C.destBg} stroke={C.destBorder} />
 
               {/* NO branch → step3 */}
-              <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} label="NO" labelSide="right" />
+              <Arrow x1={DCX} y1={Y_DIA1 + DIA1_H / 2} x2={DCX} y2={Y_STEP3} />
+              <SvgText
+                x={DCX + 14}
+                y={(Y_DIA1 + DIA1_H / 2 + Y_STEP3) / 2 + 4}
+                fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle"
+              >NO</SvgText>
 
               {/* Arrow: step3 → diamond2 */}
               <Arrow x1={DCX} y1={bot('step3')} x2={DCX} y2={Y_DIA2 - DIA2_H / 2} />
@@ -335,7 +340,12 @@ export default function SeizureFlowchart() {
               <SvgBox x={CBX} y={Y_MAG_BOX} w={CBW} h={88} fill={C.destBg} stroke={C.destBorder} />
 
               {/* NO branch → benzo section */}
-              <Arrow x1={DCX} y1={Y_DIA2 + DIA2_H / 2} x2={DCX} y2={Y_SECHDR} label="NO" labelSide="right" />
+              <Arrow x1={DCX} y1={Y_DIA2 + DIA2_H / 2} x2={DCX} y2={Y_SECHDR} />
+              <SvgText
+                x={DCX + 14}
+                y={(Y_DIA2 + DIA2_H / 2 + Y_SECHDR) / 2 + 4}
+                fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle"
+              >NO</SvgText>
 
               {/* Step 4: benzo section header + header bar */}
               <SectionHeader x={BX} y={Y_SECHDR} w={BW} text="Step 4 · Administer Benzodiazepine · Paramedic" color={C.critTitle} />
@@ -388,7 +398,12 @@ export default function SeizureFlowchart() {
               <SvgBox x={CBX} y={Y_POSTICTAL_BOX} w={CBW} h={46} fill={C.paraBg} stroke={C.paraBorder} />
 
               {/* NO → step5 */}
-              <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={DCX} y2={Y_STEP5} label="NO" labelSide="right" />
+              <Arrow x1={DCX} y1={Y_DIA3 + DIA3_H / 2} x2={DCX} y2={Y_STEP5} />
+              <SvgText
+                x={DCX + 14}
+                y={(Y_DIA3 + DIA3_H / 2 + Y_STEP5) / 2 + 4}
+                fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle"
+              >NO</SvgText>
 
               {/* Arrow: step5 → diamond4 */}
               <Arrow x1={DCX} y1={bot('step5')} x2={DCX} y2={Y_DIA4 - DIA4_H / 2} />
@@ -403,7 +418,12 @@ export default function SeizureFlowchart() {
               <SvgBox x={CBX} y={Y_MEDDIR_BOX} w={CBW} h={46} fill={C.destBg} stroke={C.destBorder} />
 
               {/* YES → step6 */}
-              <Arrow x1={DCX} y1={Y_DIA4 + DIA4_H / 2} x2={DCX} y2={Y_STEP6} label="YES" />
+              <Arrow x1={DCX} y1={Y_DIA4 + DIA4_H / 2} x2={DCX} y2={Y_STEP6} />
+              <SvgText
+                x={DCX + 14}
+                y={(Y_DIA4 + DIA4_H / 2 + Y_STEP6) / 2 + 4}
+                fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle"
+              >YES</SvgText>
 
               {/* Arrow: step6 → step7 */}
               <Arrow x1={cx} y1={Y_STEP6 + Y_STEP6_H} x2={cx} y2={Y_STEP7} />

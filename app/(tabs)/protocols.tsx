@@ -25,6 +25,13 @@ const PROTOCOLS = [
     category: 'Cardiovascular',
     scope: 'Both',
   },
+  {
+    id: 'stroke-tia',
+    title: 'Stroke / TIA',
+    subtitle: 'Adult & Pediatric',
+    category: 'Neurological',
+    scope: 'Both',
+  },
 ];
 
 const CATEGORIES = ['Cardiovascular', 'Neurological'];

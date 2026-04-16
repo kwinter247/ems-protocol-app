@@ -14,6 +14,7 @@ import { ArrowLeft, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import SeizureFlowchart from '@/components/protocols/SeizureFlowchart';
 import ChestPainFlowchart from '@/components/protocols/ChestPainFlowchart';
+import StrokeTIAFlowchart from '@/components/protocols/StrokeTIAFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -33,6 +34,10 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   'chest-pain': {
     title: 'Chest Pain',
     subtitle: 'Adult',
+  },
+  'stroke-tia': {
+    title: 'Stroke / TIA',
+    subtitle: 'Adult & Pediatric',
   },
 };
 
@@ -117,7 +122,9 @@ export default function ProtocolViewer() {
           overScrollMode="never"
         >
           <Animated.View style={[styles.svgWrapper, animStyle]}>
-            {id === 'chest-pain' ? <ChestPainFlowchart /> : <SeizureFlowchart />}
+            {id === 'chest-pain' ? <ChestPainFlowchart /> :
+             id === 'stroke-tia' ? <StrokeTIAFlowchart /> :
+             <SeizureFlowchart />}
           </Animated.View>
         </ScrollView>
       </GestureDetector>
