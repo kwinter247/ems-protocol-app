@@ -1,5 +1,36 @@
 # EMS Protocol App — Claude Session State
-Last updated: April 13, 2026
+Last updated: April 15, 2026
+
+---
+
+## Tools & Workflow
+- **Claude Chat (claude.ai)** — protocol content research, flowchart component generation
+- **Claude Code (terminal)** — wiring, routing, debugging, Git pushes
+- **GitHub** — version control, source of truth
+- **Expo Go (Android, Samsung Note 10+)** — live device testing
+
+## How to Resume Development
+1. Open **Command Prompt** (Windows key → type `cmd` → Enter). NOT PowerShell.
+2. Launch Expo (Window 1):
+   cd C:\Users\KyleW\ems-protocol-app
+   npm run dev
+   Then scan QR code fresh with Expo Go — always re-scan, never use cached connection.
+3. Open a second Command Prompt window for Claude Code (Window 2):
+   cd C:\Users\KyleW\ems-protocol-app
+   npx @anthropic-ai/claude-code
+   (type y if prompted)
+4. Claude Code reads the full project automatically — paste your instruction and go.
+5. If you need to run any other commands, open a third CMD window.
+
+## Environment Notes
+- Use `npm run dev` NOT `npx expo start`
+- Tunnel mode does NOT work — Windows ARM64, no ngrok binary support
+- Using --lan mode instead
+- Always re-scan QR code at start of each session — laptop IP can change mid-session too
+- PowerShell blocks npx — always use Command Prompt (cmd)
+- Static IP assigned to laptop: `192.168.68.100` (set in Network Adapter IPv4 settings)
+
+---
 
 ## Stack
 - React Native + Expo SDK 54, Expo Router
@@ -8,14 +39,7 @@ Last updated: April 13, 2026
 - Supabase + Claude API for Scenario AI
 - Repo: github.com/kwinter247/ems-protocol-app
 - Local: C:\Users\KyleW\ems-protocol-app
-- Dev server: npx expo start (port auto-assigned)
 - Testing: Expo Go on Android (Samsung Note 10+)
-
-## How to Resume Development
-1. Open Command Prompt on laptop
-2. `cd C:\Users\KyleW\ems-protocol-app`
-3. `claude` to launch Claude Code
-4. Claude Code reads the full project automatically — paste your instruction and go
 
 ---
 
@@ -29,8 +53,6 @@ Last updated: April 13, 2026
   - No fixed FLOWCHART_H — Animated.View wraps to content height naturally
   - Zoom in/out/reset buttons in header
   - Hint bar: "Scroll to navigate · Pinch to zoom"
-  - bounces={false} + overScrollMode="never" on ScrollView
-- Only protocol built so far: Seizures (see below)
 
 ### 2. Drug Reference Tab
 - Functional — search + category filter + scope badges
@@ -39,115 +61,156 @@ Last updated: April 13, 2026
 
 ### 3. Drug Calculation Tab
 - Functional — weight-based dose calculator
-- kg/lbs toggle
-- Pediatric detection (age < 15 per Red Book)
-- Blue peds / red adult color coding
+- kg/lbs toggle, pediatric detection (age < 15)
 - TODO: verify all doses match Red Book exactly
 
 ### 4. Scenario AI Tab
 - Was functional at one point (Claude API grounded on Red Book)
 - May need API key re-check if broken
-- kg/lbs toggle present
-- Pediatric badge when age < 15 or weight suggests peds
 
 ---
 
-## SeizureFlowchart — COMPLETE ✅
-### Architecture (v2 — this is the template for ALL future protocols)
+## Protocol Flowcharts — Status
 
-**The core pattern:**
+| Protocol | Status | File |
+|---|---|---|
+| Seizures | ✅ Complete | `SeizureFlowchart.tsx` |
+| Chest Pain / ACS / STEMI | ✅ Complete | `ChestPainFlowchart.tsx` |
+| Stroke / TIA | ✅ Complete | `StrokeTIAFlowchart.tsx` |
+| Airway Management | 🔲 Next | — |
+| Cardiac Arrest — Shockable (VF/VT) | 🔲 Needs RN rebuild | was `cardiac-arrest-shockable.html` |
+| Cardiac Arrest — Non-Shockable (Asystole/PEA) | 🔲 Needs RN rebuild | was `cardiac-arrest-non-shockable.html` |
+
+### Build Priority Order
+1. Airway Management
+2. Cardiac Arrest — Shockable (rebuild from HTML → RN v2 architecture)
+3. Cardiac Arrest — Non-Shockable (rebuild from HTML → RN v2 architecture)
+
+---
+
+## Flowchart Architecture — v2 (Template for ALL protocols)
+
+**SeizureFlowchart.tsx is the master template. Always copy it as the starting point.**
+
+### Core Pattern
 - Overall container: plain `<View>` with no fixed height
-- RN layout column drives all vertical positioning — step boxes stack
-  naturally via flex, self-sizing based on content
-- SVG overlay (StyleSheet.absoluteFill) draws ALL arrows, diamonds,
-  lines, callout box shapes, title, section headers
+- RN layout column drives all vertical positioning — step boxes stack naturally via flex
+- SVG overlay (`StyleSheet.absoluteFill`) draws ALL arrows, diamonds, lines, callout boxes, title, section headers
 - SVG reads real Y positions via `onLayout` measurements from RN elements
-- No fixed STEP_H, STEP6_H, or Y_* coordinate constants
-- `ready` flag gates SVG rendering until all onLayout measurements are in
+- Layouts store **top AND bottom Y** of each box (`{ top: number, bot: number }`)
+- `ready` flag uses explicit key check: `REQUIRED_KEYS.every(k => L[k] !== undefined)` — never count keys
+- Arrows draw from `box.bot` to `nextBox.top` — never through content
 
-**Key files:**
-- `components/protocols/SeizureFlowchart.tsx` — the flowchart (v2 architecture)
-- `components/protocols/SeizureFlowchart_v1.tsx` — original backup (keep, don't touch)
-- `components/protocols/SeizureFlowchart_OLD.tsx` — pre-v2 backup (can delete)
-- `app/protocol/[id].tsx` — viewer/scroll/zoom screen
+### Canvas Constants
+```
+W = 470, cx = W/2 = 235
+BW = 440, BX = cx - BW/2 = 15, BR = BX + BW = 455
+GAP = 24 (standard gap between all elements)
+STEP_PADDING_V = 10
+DW = 240 (diamond width)
+DCX = BX + DW/2 = 135 (diamond center X)
+CBW = 110 (callout box width)
+CBX = BR - CBW = 345 (callout box left edge)
+```
 
-**Canvas constants:**
-- W = 470, cx = W/2 = 235
-- BW = 440, BX = cx - BW/2 = 15, BR = BX + BW = 455
-- DW = 240, DCX = BX + DW/2 = 135
-- CBW = 110, CBX = BR - CBW = 345
-- GAP = 24 (standard gap between all elements)
-- STEP_PADDING_V = 10 (paddingVertical on step boxes)
+### YES/NO Label Pattern (updated standard — apply to ALL new protocols)
+Downward arrows do NOT use the Arrow `label` prop. Instead render a manual `SvgText` immediately after the Arrow call:
+```
+<Arrow x1={DCX} y1={Y_START} x2={DCX} y2={Y_END} />
+<SvgText
+  x={DCX + 14}
+  y={(Y_START + Y_END) / 2 + 4}
+  fontSize={11} fill={C.label} fontWeight="700" textAnchor="middle"
+>NO</SvgText>
+```
+- Offset 14px right of center so label doesn't overlap arrow shaft
+- y offset +4 from midpoint pushes it slightly below center, away from diamond tip
+- Horizontal arrows (going left/right to callout boxes) keep labels inline as normal
 
-**Colour tokens (C object) — use for ALL future protocols:**
-- bg: '#0d1117' — canvas background
-- emtBg/Border/Title/Sub: '#21262d' / '#484f58' / '#e6edf3' / '#8b949e'
-- paraBg/Border/Title/Sub: '#1b3a2d' / '#0F6E56' / '#56d364' / '#8fcca0'
-- critBg/Border/Title: '#2a1a0a' / '#f0883e' / '#f0883e' (critical/orange)
-- decBg/Border/Text: '#1f3a5f' / '#185FA5' / '#79c0ff' (decision diamonds)
-- destBg/Border/Text: '#3a1010' / '#d62828' / '#f85149' (redirect/danger)
-- pregBg/Border/Text: '#2a1020' / '#993556' / '#f9a8d4' (pregnancy)
-- adultBg/Border/Drug/Dose: '#1c1208' / '#9e6a03' / '#f0883e' / '#d29922'
-- pedsBg/Border/Drug/Dose: '#0a1a2a' / '#1f6feb' / '#58a6ff' / '#a5d6ff'
-- secBg/Text: '#161b22' / '#6e7681' (section headers)
-- arrow: '#6e7681', label: '#8b949e', muted: '#6e7681'
-- inclBg/Border/Text: '#1c2128' / '#8b949e' / '#c9d1d9'
-- discText: '#6e7681'
+### Colour Tokens (C object) — use for ALL protocols
+```
+bg: '#0d1117'
+emtBg/Border/Title/Sub: '#21262d' / '#484f58' / '#e6edf3' / '#8b949e'
+paraBg/Border/Title/Sub: '#1b3a2d' / '#0F6E56' / '#56d364' / '#8fcca0'
+critBg/Border/Title/Sub: '#2a1a0a' / '#f0883e' / '#f0883e' / (varies)
+decBg/Border/Text: '#1f3a5f' / '#185FA5' / '#79c0ff'
+destBg/Border/Text: '#3a1010' / '#d62828' / '#f85149'  ← RED critical callouts
+adultDrug/Dose: '#f0883e' / '#d29922'
+pedsBg/Border/Drug/Dose: '#0a1a2a' / '#1f6feb' / '#58a6ff' / '#a5d6ff'
+secBg/Text: '#161b22' / '#6e7681'
+arrow: '#6e7681', label: '#8b949e', muted: '#6e7681'
+warnBg/Border/Text: '#1a1400' / '#9e6a03' / '#d29922'  ← AMBER warnings
+inclBg/Border/Text: '#1c2128' / '#8b949e' / '#c9d1d9'
+discText: '#6e7681'
+```
 
-**Step box badge system:**
-- EMT steps: badge="EMT", emtTitle color, emtBg/Border
-- Paramedic steps: badge="PARAMEDIC", paraTitle color, paraBg/Border
-- Critical steps: badge="PARAMEDIC", critTitle color, critBg/Border
-- All providers: badge="ALL PROVIDERS", emtTitle color, emtBg/Border
+### Step Box Layout (v2 standard)
+- Top-left: `STEP N` label — color matches box accent
+- Top-right: scope badge in bordered pill (`borderWidth: 1, borderRadius: 4`)
+- Below: title + content
+- EMT boxes: gray (`emtBg/Border/Title/Sub`)
+- Paramedic boxes: green (`paraBg/Border/paraTitle/paraSub`)
+- Drug intervention boxes: orange (`critBg/Border/critTitle/critSub`)
+- Critical/destination callout boxes: RED (`destBg/Border/destText`)
 
-**Benzo column layout (Step 4):**
-- colW = BW/2 - 5
-- Two side-by-side SVG rects: adult (adultBg/Border) + peds (pedsBg/Border)
-- BENZO_COL_H = 195
-- SectionHeader text color for Step 4 header: C.critTitle (#f0883e)
-- "Administer Benzodiazepine" header fontSize={18}
-- Drug name fontSize={13}, dose fontSize={14}
+### Inline Reference Blocks (established in Stroke/TIA)
+Fixed-height SVG blocks used for inline educational/reference content between steps:
+- **FAST block**: 4-column card grid (F/A/S/T), T column in orange. Header bar in `secBg`. Constants: `FAST_HDR_H=28, FAST_CARD_H=110, FAST_TOTAL=146`
+- **VAN block**: 3-column card grid (V/A/N) in `decBg/decBorder`. Header in `paraBg`. Constants: `VAN_HDR_H=28, VAN_SUB_H=22, VAN_CARD_H=100, VAN_TOTAL=162`
+- Pattern: RN `<View onLayout={measure('blockkey')} style={{ height: BLOCK_TOTAL }}>` spacer + SVG draws content at measured Y
+- Use connector `<Line>` (no arrowhead) into reference blocks, `<Arrow>` out of them
 
-**Diamond sizes:**
-- DIA1_H = 100 (BGL < 60?)
-- DIA2_H = 120 (Pregnant > 20 wk?)
-- DIA3_H = 100 (Seizure stopped? post-benzo)
-- DIA4_H = 100 (Seizure stopped? post-repeat)
+### Section Bars
+- EMT bar: drawn in SVG at Y=56, height 20, `secBg`, text `emtSub`
+- PARAMEDIC bar: measured RN `<View>` with `onLayout` — SVG draws rect at exact measured Y
+- No arrow between PARAMEDIC bar and first paramedic step
 
-**onLayout measurement keys:**
-step1, step2, spacer1, step3, spacer2, benzospace, spacer3, step5,
-spacer4, step6, step7, pregnote, disc
-
----
-
-## How to Build a New Protocol Flowchart
-
-1. Copy `SeizureFlowchart.tsx` → rename to e.g. `StrokeFlowchart.tsx`
-2. Keep all architecture, helpers, colour tokens, and canvas constants
-3. Replace: step content, diamond content, callout box content,
-   benzo section (or remove if not applicable), onLayout keys,
-   diamond height constants, and section headers
-4. Add the new flowchart to the protocol list/router so it appears
-   in the Protocols tab
-5. Test on device — verify onLayout measurements produce clean arrow alignment
+### How to Build a New Protocol Flowchart
+1. In Claude Chat, paste this session state + ask for the new protocol
+2. Claude Chat reads the Red Book PDF (stored in the Claude project) for protocol content
+3. Claude Chat generates the complete `.tsx` file
+4. Download → verify in Notepad (search for a unique string from the new version) → copy to `components/protocols/`
+5. Open Claude Code and say: "Wire up [ProtocolName]Flowchart to the protocol router — follow the same pattern as StrokeTIAFlowchart"
+6. Test in Expo Go — expect 1-2 rounds of layout fixes before it's clean
+7. Push to GitHub from Claude Code when done
 
 ---
 
 ## Remaining Build Tasks (priority order)
-1. Chest Pain / ACS / STEMI flowchart
-2. Stroke / TIA flowchart
-3. Airway Management flowchart
-4. Cardiac Arrest flowchart (shockable + non-shockable — previously
-   built as HTML, needs to be rebuilt in RN using v2 architecture)
-5. Replace Drug Reference dataset with full 40-drug Red Book data
-6. Verify Drug Calculation doses match Red Book exactly
-7. Fix Android nav bar covering bottom tabs (known issue)
-8. EAS Build / App Store submission
+1. Airway Management flowchart
+2. Cardiac Arrest — Shockable (VF/VT) flowchart — rebuild from HTML to RN v2
+3. Cardiac Arrest — Non-Shockable (Asystole/PEA) flowchart — rebuild from HTML to RN v2
+4. Reconcile minor formatting differences between Seizure and Chest Pain protocols
+5. Apply offset YES/NO label pattern to ChestPainFlowchart (done via Claude Code session Apr 15)
+6. Replace Drug Reference dataset with full 40-drug Red Book data
+7. Verify Drug Calculation doses match Red Book exactly
+8. Fix Android nav bar covering bottom tabs (known issue)
+9. EAS Build / App Store submission
 
 ---
 
 ## Key Clinical Rules (Red Book 2026)
 - Pediatric = under 15 years old
-- Defibrillation joules: reference "per monitor settings" only
-  (Philips MRx, Stryker LIFEPAK, Zoll X Series) — never hardcode joules
+- Defibrillation joules: reference "per monitor settings" only — never hardcode joules
 - Max epinephrine doses: 3 doses per cardiac arrest protocol
+- NTG contraindicated if PDE5 inhibitor taken within 48 hours
+- NTG requires SBP > 100 mmHg
+- Aspirin indicated for adult ACS only — not pediatric
+- Fentanyl for STEMI chest pain unresponsive to NTG: 0.5 mcg/kg IN/IV/IO, max initial 50 mcg, max total 200 mcg
+- Stroke destination: onset < 4 hrs → nearest stroke center; onset > 4 hrs → VAN screen → Comprehensive/Thrombectomy capable (unless > 30 min then closest)
+- Stroke scales not validated in pediatric patients
+
+---
+
+## Source Document
+- Red Book: Central Arizona Regional EMS Guidelines, Chapter 3
+- Updated November 2025, effective January 12, 2026
+- PDF stored in the Claude project (available to Claude Chat automatically)
+- 186 pages, fully text-extractable
+
+---
+
+## Last GitHub Commit
+- Commit `b4aaf75` — April 15, 2026
+- "Add Stroke/TIA flowchart with FAST and VAN blocks, update YES/NO label positioning across all protocols"
+- 4 files: StrokeTIAFlowchart.tsx (new), app/protocol/[id].tsx, app/(tabs)/protocols.tsx, SeizureFlowchart.tsx
