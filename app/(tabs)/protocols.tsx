@@ -32,9 +32,23 @@ const PROTOCOLS = [
     category: 'Neurological',
     scope: 'Both',
   },
+  {
+    id: 'rsi',
+    title: 'RSI',
+    subtitle: 'Age ≥ 15 · Special Training Required',
+    category: 'Airway',
+    scope: 'Paramedic',
+  },
+  {
+    id: 'airway-management',
+    title: 'Airway Management',
+    subtitle: 'Adult & Pediatric',
+    category: 'Airway',
+    scope: 'Both',
+  },
 ];
 
-const CATEGORIES = ['Cardiovascular', 'Neurological'];
+const CATEGORIES = ['Airway', 'Cardiovascular', 'Neurological'];
 
 const SCOPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   EMT: {
