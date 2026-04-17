@@ -15,6 +15,7 @@ import { colors } from '@/constants/colors';
 import SeizureFlowchart from '@/components/protocols/SeizureFlowchart';
 import ChestPainFlowchart from '@/components/protocols/ChestPainFlowchart';
 import StrokeTIAFlowchart from '@/components/protocols/StrokeTIAFlowchart';
+import CardiacArrestShockableFlowchart from '@/components/protocols/CardiacArrestShockableFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -37,6 +38,10 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   },
   'stroke-tia': {
     title: 'Stroke / TIA',
+    subtitle: 'Adult & Pediatric',
+  },
+  'cardiac-arrest-shockable': {
+    title: 'Cardiac Arrest — Shockable (VF/VT)',
     subtitle: 'Adult & Pediatric',
   },
 };
@@ -124,6 +129,7 @@ export default function ProtocolViewer() {
           <Animated.View style={[styles.svgWrapper, animStyle]}>
             {id === 'chest-pain' ? <ChestPainFlowchart /> :
              id === 'stroke-tia' ? <StrokeTIAFlowchart /> :
+             id === 'cardiac-arrest-shockable' ? <CardiacArrestShockableFlowchart /> :
              <SeizureFlowchart />}
           </Animated.View>
         </ScrollView>

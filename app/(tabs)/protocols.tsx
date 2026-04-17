@@ -46,9 +46,16 @@ const PROTOCOLS = [
     category: 'Airway',
     scope: 'Both',
   },
+{
+    id: 'cardiac-arrest-shockable',
+    title: 'Cardiac Arrest — Shockable (VF/VT)',
+    subtitle: 'Adult & Pediatric',
+    category: 'Cardiac Arrest',
+    scope: 'Both',
+  },
 ];
 
-const CATEGORIES = ['Airway', 'Cardiovascular', 'Neurological'];
+const CATEGORIES = ['Cardiac Arrest', 'Airway', 'Cardiovascular', 'Neurological'];
 
 const SCOPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   EMT: {
