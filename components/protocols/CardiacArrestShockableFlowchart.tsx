@@ -33,6 +33,10 @@ const DXR = 255; // right tip of diamond
 const CBW = 140;
 const CBX = 315;
 
+// Diamond 1 callout — wider, self-contained passive O₂ box
+const CBW_D1 = 170;
+const CBX_D1 = 285;
+
 // ─── Colour tokens ───────────────────────────────────────────────────────────
 const C = {
   bg: '#0d1117',
@@ -59,6 +63,7 @@ const C = {
   destBg: '#3a1010',
   destBorder: '#d62828',
   destText: '#f85149',
+  destSub: '#e89b9b',
   // Pediatric
   pedsBg: '#0a1a2a',
   pedsBorder: '#1f6feb',
@@ -80,27 +85,27 @@ const C = {
 type LayoutMap = Record<string, { top: number; bot: number } | undefined>;
 
 // Keys that MUST be measured before SVG renders
+// Internal keys retain original names; display labels (STEP 1, STEP 2...) renumbered after
+// removing the old "Ventilation Mode" box (was step4) and the unused step5 stub.
 const REQUIRED_KEYS = [
   'title',
   'excl',
   'emtBar',
-  'step1',
-  'step2',
-  'step3',
-  'step4',
-  'dec1',       // Decision: Unwitnessed / special case?
-  'step5',      // Passive oxygenation (≥8 yrs)
-  'step6',      // BVM start (≥8 yrs no response / <8 yrs)
+  'step1',      // display: STEP 1 — Compressions
+  'step2',      // display: STEP 2 — AED
+  'step3',      // display: STEP 3 — Airway / Oxygenation
+  'dec1',       // Decision: Witnessed cardiac arrest, ≥8 yrs?
+  'step6',      // display: STEP 4 — Manual Ventilation (BVM)
   'paraBar',
-  'step7',      // IV/IO + Monitor
-  'step8',      // Defibrillate
-  'step9',      // Epinephrine
-  'step10',     // Amiodarone / Lidocaine decision block
+  'step7',      // display: STEP 5 — IV/IO + Monitor
+  'step8',      // display: STEP 6 — Defibrillate
+  'step9',      // display: STEP 7 — Epinephrine
+  'step10',     // display: STEP 8 — Shock-refractory
   'dec2',       // Decision: ROSC?
-  'step11',     // Reversible causes
+  'step11',     // display: STEP 9 — Continue resuscitation
   'dec3',       // Decision: After 4 rounds?
-  'step12',     // TOR / transport
-  'step13',     // ROSC care
+  'step12',     // display: STEP 10 — TOR / Transport
+  'step13',     // ROSC care (callout stub)
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -158,6 +163,7 @@ function StepBox({
   border,
   bodyColor,
   subColor,
+  scope,
   onLayout,
 }: {
   stepNum: string;
@@ -167,6 +173,7 @@ function StepBox({
   border: string;
   bodyColor: string;
   subColor: string;
+  scope?: 'EMT' | 'PARAMEDIC';
   onLayout: (e: any) => void;
 }) {
   return (
@@ -177,7 +184,10 @@ function StepBox({
         { backgroundColor: bg, borderColor: border, marginHorizontal: BX },
       ]}
     >
-      <Text style={[styles.stepLabel, { color: bodyColor }]}>{stepNum}</Text>
+      <View style={styles.stepHeader}>
+        <Text style={[styles.stepLabel, { color: subColor }]}>{stepNum}</Text>
+        {scope && <ScopeBadge scope={scope} />}
+      </View>
       <Text style={[styles.stepTitle, { color: bodyColor }]}>{title}</Text>
       {bullets.map((b, i) => (
         <Text key={i} style={[styles.bullet, { color: subColor }]}>
@@ -278,7 +288,36 @@ function ConnLine({
   );
 }
 
-// Diamond shape
+// Scope badge (top-right corner of step boxes)
+// `tone` overrides the default color:
+//   'default' → EMT (white) / PARAMEDIC (green)
+//   'orange'  → matches orange drug-admin boxes
+//   'red'     → matches red defibrillate / destination boxes
+function ScopeBadge({
+  scope,
+  tone = 'default',
+}: {
+  scope: 'EMT' | 'PARAMEDIC';
+  tone?: 'default' | 'orange' | 'red';
+}) {
+  let color: string;
+  let borderColor: string;
+  if (tone === 'orange') {
+    color = C.critTitle;
+    borderColor = C.critBorder;
+  } else if (tone === 'red') {
+    color = C.destText;
+    borderColor = C.destBorder;
+  } else {
+    color = scope === 'EMT' ? C.emtTitle : C.paraTitle;
+    borderColor = scope === 'EMT' ? C.emtBorder : C.paraBorder;
+  }
+  return (
+    <View style={[styles.scopeBadge, { borderColor }]}>
+      <Text style={[styles.scopeBadgeText, { color }]}>{scope}</Text>
+    </View>
+  );
+}
 function Diamond({
   cx: dCX,
   cy: dCY,
@@ -305,9 +344,13 @@ function Diamond({
         stroke={C.decBorder}
         strokeWidth={2}
       />
+      {/* Two-line: center the text block on dCY
+          Main line (11pt, blue): baseline at dCY - 3
+          Sub line  (11pt, white-ish): baseline at dCY + 12
+          Visual block centerline ≈ dCY. */}
       <SvgText
         x={dCX}
-        y={subText ? dCY - 2 : dCY + 4}
+        y={subText ? dCY - 3 : dCY + 4}
         fontSize={11}
         fill={C.decText}
         textAnchor="middle"
@@ -319,9 +362,10 @@ function Diamond({
         <SvgText
           x={dCX}
           y={dCY + 12}
-          fontSize={9.5}
-          fill={C.label}
+          fontSize={11}
+          fill={C.emtTitle}
           textAnchor="middle"
+          fontWeight="600"
         >
           {subText}
         </SvgText>
@@ -366,6 +410,7 @@ export default function CardiacArrestShockableFlowchart() {
       border={C.emtBorder}
       bodyColor={C.emtTitle}
       subColor={C.emtSub}
+      scope="EMT"
     />
   );
 
@@ -385,6 +430,7 @@ export default function CardiacArrestShockableFlowchart() {
       border={C.paraBorder}
       bodyColor={C.paraTitle}
       subColor={C.paraSub}
+      scope="PARAMEDIC"
     />
   );
 
@@ -457,27 +503,39 @@ export default function CardiacArrestShockableFlowchart() {
         {/* step2 → step3 */}
         <Arrow x1={cx} y1={l.step2.bot} x2={cx} y2={l.step3.top} />
 
-        {/* step3 → step4 */}
-        <Arrow x1={cx} y1={l.step3.bot} x2={cx} y2={l.step4.top} />
+        {/* step3 → dec1 (Ventilation Mode assessment box removed — diamond now assesses directly) */}
+        <Arrow x1={DCX} y1={l.step3.bot} x2={DCX} y2={l.dec1.top} />
 
-        {/* step4 → dec1 */}
-        <Arrow x1={DCX} y1={l.step4.bot} x2={DCX} y2={l.dec1.top} />
-
-        {/* dec1 diamond */}
+        {/* dec1 diamond — Witnessed cardiac arrest, ≥8 yrs? */}
         <Diamond
           cx={DCX}
           cy={d1mid}
           w={DW}
           h={l.dec1.bot - l.dec1.top}
-          text="Unwitnessed OR"
-          subText="Respiratory/OD/Trauma/Drowning/<8?"
+          text="Witnessed cardiac arrest,"
+          subText="≥8 yrs?"
         />
 
-        {/* dec1 YES — down */}
+        {/* dec1 NO — down to step6 (immediate BVM: unwitnessed / resp / OD / trauma / drowning / <8)
+            Label "NO" sits slightly RIGHT of the vertical line per convention. */}
         <Arrow x1={DCX} y1={l.dec1.bot} x2={DCX} y2={l.step6.top} />
         <SvgText
-          x={DCX + 14}
+          x={DCX + 6}
           y={(l.dec1.bot + l.step6.top) / 2 + 4}
+          fontSize={11}
+          fill={C.label}
+          fontWeight="700"
+          textAnchor="start"
+        >
+          NO
+        </SvgText>
+
+        {/* dec1 YES — right to passive O₂ callout (NO arrowhead — callout is terminal)
+            Label "YES" sits ABOVE the horizontal line per convention. */}
+        <ConnLine x1={DXR} y1={d1mid} x2={CBX_D1} y2={d1mid} />
+        <SvgText
+          x={(DXR + CBX_D1) / 2}
+          y={d1mid - 6}
           fontSize={11}
           fill={C.label}
           fontWeight="700"
@@ -486,26 +544,91 @@ export default function CardiacArrestShockableFlowchart() {
           YES
         </SvgText>
 
-        {/* dec1 NO — right to step5 callout */}
-        <Arrow x1={DXR} y1={d1mid} x2={CBX} y2={d1mid} label="NO" />
-        {calloutBox(
-          d1mid,
-          ['≥8 yrs:', 'Passive O₂', '(NRM + OPA or', 'STR passive port)'],
-          C.emtBg,
-          C.emtBorder,
-          C.emtTitle,
-        )}
-
-        {/* step5 stub — passive O₂ step is rendered as callout; connect callout to step6 via right-side vertical */}
-        {/* step5 measured stub: connect bottom of callout area → step6 */}
-        {/* We use a path: right edge of callout down and back left to cx at step6 */}
-        <Path
-          d={`M ${CBX + CBW / 2} ${d1mid + 28} L ${CBX + CBW / 2} ${l.step6.top + (l.step6.bot - l.step6.top) / 2} L ${cx} ${l.step6.top + (l.step6.bot - l.step6.top) / 2}`}
-          stroke={C.arrow}
-          strokeWidth={1.5}
-          fill="none"
-          markerEnd="url(#arrowhead)"
-        />
+        {/* Passive O₂ callout — custom (self-contained, mixed colors)
+            Layout:
+              Line 1: "Passive O₂"            (title, 14pt, white)
+              Line 2: "(NRB + OPA or SGA)"     (subtitle, 10pt, dim)
+              Line 3: "If no response 8 min,"  (warn, orange)
+              Line 4: "→ Step 4 (active BVM)"  (warn, orange, bold)        */}
+        {(() => {
+          const titleSize = 14;
+          const subSize = 10;
+          const warnSize = 10;
+          const lineGap = 4;
+          const padTop = 10;
+          const padBot = 10;
+          const sectionGap = 6;
+          const boxH =
+            padTop +
+            titleSize +
+            lineGap +
+            subSize +
+            sectionGap +
+            warnSize +
+            lineGap +
+            warnSize +
+            padBot;
+          const top = d1mid - boxH / 2;
+          const centerX = CBX_D1 + CBW_D1 / 2;
+          let y = top + padTop + titleSize - 2; // baseline of title
+          return (
+            <>
+              <Rect
+                x={CBX_D1}
+                y={top}
+                width={CBW_D1}
+                height={boxH}
+                rx={6}
+                fill={C.emtBg}
+                stroke={C.emtBorder}
+                strokeWidth={1.5}
+              />
+              {/* Title */}
+              <SvgText
+                x={centerX}
+                y={y}
+                fontSize={titleSize}
+                fill={C.emtTitle}
+                textAnchor="middle"
+                fontWeight="800"
+              >
+                Passive O₂
+              </SvgText>
+              {/* Subtitle */}
+              <SvgText
+                x={centerX}
+                y={(y += lineGap + subSize)}
+                fontSize={subSize}
+                fill={C.emtSub}
+                textAnchor="middle"
+              >
+                (NRB + OPA or SGA)
+              </SvgText>
+              {/* Warn line 1 */}
+              <SvgText
+                x={centerX}
+                y={(y += sectionGap + warnSize)}
+                fontSize={warnSize}
+                fill={C.critSub}
+                textAnchor="middle"
+                fontWeight="600"
+              >
+                If no response 8 min,
+              </SvgText>
+              {/* Warn line 2 */}
+              <SvgText
+                x={centerX}
+                y={(y += lineGap + warnSize)}
+                fontSize={warnSize}
+                fill={C.critSub}
+                textAnchor="middle"
+                fontWeight="800"
+              >
+                → Step 4 (active BVM)
+              </SvgText>
+            </>
+          );
+        })()}
 
         {/* step6 → paraBar */}
         <Arrow x1={cx} y1={l.step6.bot} x2={cx} y2={l.paraBar.top} />
@@ -542,8 +665,8 @@ export default function CardiacArrestShockableFlowchart() {
         {/* step9 → step10 */}
         <Arrow x1={cx} y1={l.step9.bot} x2={cx} y2={l.step10.top} />
 
-        {/* step10 → dec2 */}
-        <Arrow x1={cx} y1={l.step10.bot} x2={cx} y2={l.dec2.top} />
+        {/* step10 → dec2 (enter diamond at DCX) */}
+        <Arrow x1={DCX} y1={l.step10.bot} x2={DCX} y2={l.dec2.top} />
 
         {/* dec2 diamond — ROSC? */}
         <Diamond
@@ -554,8 +677,19 @@ export default function CardiacArrestShockableFlowchart() {
           text="ROSC?"
         />
 
-        {/* dec2 YES → step13 ROSC care (right callout) */}
-        <Arrow x1={DXR} y1={d2mid} x2={CBX} y2={d2mid} label="YES" />
+        {/* dec2 YES → step13 ROSC care (right callout)
+            Label "YES" sits ABOVE the horizontal line per convention. */}
+        <Arrow x1={DXR} y1={d2mid} x2={CBX} y2={d2mid} />
+        <SvgText
+          x={(DXR + CBX) / 2}
+          y={d2mid - 6}
+          fontSize={11}
+          fill={C.label}
+          fontWeight="700"
+          textAnchor="middle"
+        >
+          YES
+        </SvgText>
         {calloutBox(
           d2mid,
           ['→ ROSC Care', 'Protocol', '(Post-Arrest)'],
@@ -564,21 +698,22 @@ export default function CardiacArrestShockableFlowchart() {
           C.paraTitle,
         )}
 
-        {/* dec2 NO → step11 */}
+        {/* dec2 NO → step11
+            Label "NO" sits slightly RIGHT of the vertical line per convention. */}
         <Arrow x1={DCX} y1={l.dec2.bot} x2={DCX} y2={l.step11.top} />
         <SvgText
-          x={DCX + 14}
+          x={DCX + 6}
           y={(l.dec2.bot + l.step11.top) / 2 + 4}
           fontSize={11}
           fill={C.label}
           fontWeight="700"
-          textAnchor="middle"
+          textAnchor="start"
         >
           NO
         </SvgText>
 
-        {/* step11 → dec3 */}
-        <Arrow x1={cx} y1={l.step11.bot} x2={cx} y2={l.dec3.top} />
+        {/* step11 → dec3 (enter diamond at DCX) */}
+        <Arrow x1={DCX} y1={l.step11.bot} x2={DCX} y2={l.dec3.top} />
 
         {/* dec3 diamond — After 4 rounds? */}
         <Diamond
@@ -590,15 +725,16 @@ export default function CardiacArrestShockableFlowchart() {
           subText="No ROSC"
         />
 
-        {/* dec3 YES → step12 */}
+        {/* dec3 YES → step12
+            Label "YES" sits slightly RIGHT of the vertical line per convention. */}
         <Arrow x1={DCX} y1={l.dec3.bot} x2={DCX} y2={l.step12.top} />
         <SvgText
-          x={DCX + 14}
+          x={DCX + 6}
           y={(l.dec3.bot + l.step12.top) / 2 + 4}
           fontSize={11}
           fill={C.label}
           fontWeight="700"
-          textAnchor="middle"
+          textAnchor="start"
         >
           YES
         </SvgText>
@@ -733,52 +869,46 @@ export default function CardiacArrestShockableFlowchart() {
 
       <View style={{ height: GAP }} />
 
-      {/* STEP 4 — Special cases note */}
-      {E(
-        'step4',
-        'STEP 4',
-        'Ventilation Mode — Assess',
-        [
-          'Special cases → immediate BVM at 10 bpm:',
-          '  Unwitnessed arrest',
-          '  Respiratory cause, overdose, trauma, drowning',
-          '  Pediatric < 8 years old',
-          'All others (≥8 yrs, witnessed, cardiac cause):',
-          '  Passive O₂ first (NRM + OPA or STR passive port)',
-          '  If no response after 8 min → begin BVM at 10 bpm',
-        ],
-      )}
-
-      <View style={{ height: GAP }} />
-
-      {/* DECISION 1 — measured stub */}
+      {/* DECISION 1 — measured stub (flow: STEP 3 → Diamond 1 directly) */}
       <View onLayout={measure('dec1')} style={{ height: 72, marginHorizontal: BX }} />
 
-      {/* STEP 5 is rendered as a callout (NO branch) — stub for layout */}
-      <View onLayout={measure('step5')} style={{ height: 4 }} />
-
       <View style={{ height: GAP }} />
 
-      {/* STEP 6 — BVM / immediate ventilation */}
-      {E(
-        'step6',
-        'STEP 6',
-        'Manual Ventilation (BVM or STR)',
-        [
-          'Rate: 10 breaths/min',
-          'Continue compressions with asynchronous ventilation',
-        ],
-      )}
+      {/* STEP 4 — Manual Ventilation (internally keyed as 'step6') */}
+      <View
+        onLayout={measure('step6')}
+        style={[
+          styles.stepBox,
+          { backgroundColor: C.emtBg, borderColor: C.emtBorder, marginHorizontal: BX },
+        ]}
+      >
+        <View style={styles.stepHeader}>
+          <Text style={[styles.stepLabel, { color: C.emtSub }]}>STEP 4</Text>
+          <ScopeBadge scope="EMT" />
+        </View>
+        <Text style={[styles.stepTitle, { color: C.emtTitle }]}>
+          Manual Ventilation (BVM or STR)
+        </Text>
+        <Text style={[styles.bullet, { color: C.emtSub }]}>
+          • Rate: 10 breaths/min
+        </Text>
+        <Text style={[styles.bullet, { color: C.emtSub }]}>
+          • Continue compressions with asynchronous ventilation
+        </Text>
+        <Text style={[styles.causeNote, { marginTop: 6 }]}>
+          ⚠ Consider cause:{'\n'}Unwitnessed • Respiratory • Overdose • Trauma • Drowning • &lt;8 yrs
+        </Text>
+      </View>
 
       <View style={{ height: GAP }} />
 
       {/* ── PARAMEDIC BAR ─────────────────────────────────────────────── */}
       <View onLayout={measure('paraBar')} style={{ height: 20, marginHorizontal: BX }} />
 
-      {/* STEP 7 — IV/IO + Monitor */}
+      {/* Display: STEP 5 — IV/IO + Monitor (internally 'step7') */}
       {P(
         'step7',
-        'STEP 7',
+        'STEP 5',
         'IV/IO Access + Monitor',
         [
           'IV/IO access as soon as possible — do NOT interrupt compressions',
@@ -789,12 +919,15 @@ export default function CardiacArrestShockableFlowchart() {
 
       <View style={{ height: GAP }} />
 
-      {/* STEP 8 — Defibrillate */}
+      {/* Display: STEP 6 — Defibrillate (internally 'step8') — red destination/alert style */}
       <View
         onLayout={measure('step8')}
         style={[styles.defiBox, { marginHorizontal: BX }]}
       >
-        <Text style={styles.defiLabel}>STEP 8</Text>
+        <View style={styles.stepHeader}>
+          <Text style={styles.defiLabel}>STEP 6</Text>
+          <ScopeBadge scope="PARAMEDIC" tone="red" />
+        </View>
         <Text style={styles.defiTitle}>⚡ Defibrillate</Text>
         <Text style={styles.defiBullet}>• Per monitor settings</Text>
         <Text style={styles.defiBullet}>
@@ -809,12 +942,15 @@ export default function CardiacArrestShockableFlowchart() {
 
       <View style={{ height: GAP }} />
 
-      {/* STEP 9 — Epinephrine */}
+      {/* Display: STEP 7 — Epinephrine (internally 'step9') — orange + PARAMEDIC badge */}
       <View
         onLayout={measure('step9')}
         style={[styles.drugBox, { marginHorizontal: BX }]}
       >
-        <Text style={styles.drugLabel}>STEP 9</Text>
+        <View style={styles.stepHeader}>
+          <Text style={styles.drugLabel}>STEP 7</Text>
+          <ScopeBadge scope="PARAMEDIC" tone="orange" />
+        </View>
         <Text style={styles.drugTitle}>Epinephrine</Text>
 
         {/* Adult dose */}
@@ -822,12 +958,12 @@ export default function CardiacArrestShockableFlowchart() {
           <View style={styles.doseBadge}>
             <Text style={styles.doseBadgeText}>ADULT</Text>
           </View>
-          <Text style={styles.doseText}>
+          <Text style={[styles.doseText, { color: C.critTitle }]}>
             1 mg (0.1 mg/mL) IV/IO{'\n'}Every 3–5 min · Max 3 total doses
           </Text>
         </View>
 
-        {/* Peds dose */}
+        {/* Peds dose — stays blue */}
         <View style={[styles.doseRow, { marginTop: 6 }]}>
           <View style={[styles.doseBadge, styles.pedsBadge]}>
             <Text style={[styles.doseBadgeText, { color: C.pedsDrug }]}>
@@ -843,16 +979,19 @@ export default function CardiacArrestShockableFlowchart() {
 
       <View style={{ height: GAP }} />
 
-      {/* STEP 10 — Shock-refractory drugs */}
+      {/* Display: STEP 8 — Refractory VF/VT (internally 'step10') — orange + PARAMEDIC badge */}
       <View
         onLayout={measure('step10')}
         style={[styles.drugBox, { marginHorizontal: BX }]}
       >
-        <Text style={styles.drugLabel}>STEP 10</Text>
-        <Text style={styles.drugTitle}>
-          Shock-Refractory VF / Pulseless VT
+        <View style={styles.stepHeader}>
+          <Text style={styles.drugLabel}>STEP 8</Text>
+          <ScopeBadge scope="PARAMEDIC" tone="orange" />
+        </View>
+        <Text style={[styles.drugTitle, { color: C.emtTitle }]}>
+          Refractory VF / Pulseless VT (After shock)
         </Text>
-        <Text style={styles.drugSub}>
+        <Text style={[styles.drugSub, { color: C.label }]}>
           Consider antiarrhythmic if VF/VT persists after defibrillation:
         </Text>
 
@@ -862,9 +1001,8 @@ export default function CardiacArrestShockableFlowchart() {
           <View style={styles.doseBadge}>
             <Text style={styles.doseBadgeText}>ADULT</Text>
           </View>
-          <Text style={styles.doseText}>
-            300 mg IV/IO over 10 min{'\n'}Repeat: 150 mg once at 5 min if
-            recurs
+          <Text style={[styles.doseText, { color: C.critTitle }]}>
+            300 mg IV/IO over 10 min{'\n'}Repeat: 150 mg once at 5 min if recurs
           </Text>
         </View>
         <View style={[styles.doseRow, { marginTop: 4 }]}>
@@ -886,31 +1024,29 @@ export default function CardiacArrestShockableFlowchart() {
           <View style={styles.doseBadge}>
             <Text style={styles.doseBadgeText}>ADULT</Text>
           </View>
-          <Text style={styles.doseText}>
+          <Text style={[styles.doseText, { color: C.critTitle }]}>
             1–1.5 mg/kg IV/IO{'\n'}Repeat ½ dose q5 min · Max total 3 mg/kg
           </Text>
         </View>
 
-        {/* Torsades */}
-        <View style={[styles.warnBoxInline, { marginTop: 8 }]}>
-          <Text style={styles.warnTitleSmall}>Torsades de Pointes</Text>
-          <Text style={styles.warnBodySmall}>
+        {/* Torsades — gray sub-box, mag dose orange */}
+        <View style={[styles.torsadesBox, { marginTop: 8 }]}>
+          <Text style={styles.torsadesTitle}>Torsades de Pointes</Text>
+          <Text style={styles.torsadesDose}>
             Magnesium Sulfate: 50 mg/kg IV/IO · Max 2 g (adult) over 5 min
           </Text>
         </View>
 
-        {/* Reversible causes */}
-        <View style={[styles.critBoxInline, { marginTop: 8 }]}>
-          <Text style={styles.critTitleSmall}>
+        {/* Reversible causes — white title, gray body, Ca doses orange */}
+        <View style={[styles.revCausesBox, { marginTop: 8 }]}>
+          <Text style={styles.revCausesTitle}>
             Consider Reversible Causes (H&apos;s &amp; T&apos;s)
           </Text>
-          <Text style={styles.critBodySmall}>
-            Hypothermia · Hyperkalemia · Hypovolemia{'\n'}Overdose · Tension
-            pneumothorax
+          <Text style={styles.revCausesBody}>
+            Hypothermia · Hyperkalemia · Hypovolemia{'\n'}Overdose · Tension pneumothorax
           </Text>
-          <Text style={[styles.critBodySmall, { marginTop: 4 }]}>
-            Hyperkalemia → Calcium Gluconate 100 mg/kg IV/IO (max 2 g) or
-            {'\n'}Calcium Chloride 20 mg/kg IV/IO (max 1 g) over 5 min
+          <Text style={[styles.revCausesDose, { marginTop: 4 }]}>
+            Hyperkalemia → Calcium Gluconate 100 mg/kg IV/IO (max 2 g) or{'\n'}Calcium Chloride 20 mg/kg IV/IO (max 1 g) over 5 min
           </Text>
         </View>
       </View>
@@ -925,10 +1061,10 @@ export default function CardiacArrestShockableFlowchart() {
 
       <View style={{ height: GAP }} />
 
-      {/* STEP 11 — Continue resuscitation */}
+      {/* Display: STEP 9 — Continue resuscitation (internally 'step11') */}
       {P(
         'step11',
-        'STEP 11',
+        'STEP 9',
         'Continue Resuscitation',
         [
           'Repeat 2-min compression cycles',
@@ -944,12 +1080,15 @@ export default function CardiacArrestShockableFlowchart() {
       <View onLayout={measure('dec3')} style={{ height: 72, marginHorizontal: BX }} />
       <View style={{ height: GAP }} />
 
-      {/* STEP 12 — TOR / Transport decision */}
+      {/* Display: STEP 10 — TOR / Transport decision (internally 'step12') */}
       <View
         onLayout={measure('step12')}
         style={[styles.destBox, { marginHorizontal: BX }]}
       >
-        <Text style={styles.destLabel}>STEP 12</Text>
+        <View style={styles.stepHeader}>
+          <Text style={styles.destLabel}>STEP 10</Text>
+          <ScopeBadge scope="PARAMEDIC" />
+        </View>
         <Text style={styles.destTitle}>Transport / TOR Decision</Text>
         <Text style={styles.destBullet}>
           • Transport to Cardiac Receiving Center (CRC) if ROSC achieved
@@ -1091,6 +1230,82 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 18,
   },
+  // Scope badge (top-right corner of step boxes)
+  scopeBadge: {
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  scopeBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+
+  // Step header row (step label left, scope badge right)
+  stepHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+
+  // Torsades sub-box — gray border/title, orange dose
+  torsadesBox: {
+    backgroundColor: C.emtBg,
+    borderColor: C.emtBorder,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  torsadesTitle: {
+    color: C.emtTitle,
+    fontSize: 10,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  torsadesDose: {
+    color: C.critTitle,
+    fontSize: 10,
+    lineHeight: 15,
+    fontWeight: '600',
+  },
+
+  // Reversible Causes sub-box — white title, gray body, orange Ca doses
+  revCausesBox: {
+    backgroundColor: C.emtBg,
+    borderColor: C.emtBorder,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  revCausesTitle: {
+    color: C.emtTitle,
+    fontSize: 10,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  revCausesBody: {
+    color: C.label,
+    fontSize: 10,
+    lineHeight: 15,
+  },
+  revCausesDose: {
+    color: C.critTitle,
+    fontSize: 10,
+    lineHeight: 15,
+    fontWeight: '600',
+  },
+
+  causeNote: {
+    fontSize: 11,
+    lineHeight: 17,
+    color: C.critTitle,
+    fontWeight: '700',
+  },
 
   // Section bar (EMT / PARAMEDIC)
   sectionBar: {
@@ -1115,7 +1330,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   defiLabel: {
-    color: C.paraTitle,
+    color: C.destSub,
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1,
@@ -1150,30 +1365,30 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
 
-  // Drug box
+  // Drug box — ORANGE (matches Chest Pain / Seizure drug administration pattern)
   drugBox: {
-    backgroundColor: C.paraBg,
-    borderColor: C.paraBorder,
+    backgroundColor: C.critBg,
+    borderColor: C.critBorder,
     borderWidth: 1.5,
     borderRadius: 8,
     paddingVertical: STEP_PADDING_V,
     paddingHorizontal: 12,
   },
   drugLabel: {
-    color: C.paraTitle,
+    color: C.critSub,
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 2,
   },
   drugTitle: {
-    color: C.paraTitle,
+    color: C.critTitle,
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
   },
   drugSub: {
-    color: C.paraSub,
+    color: C.critSub,
     fontSize: 11,
     marginBottom: 4,
   },
@@ -1227,7 +1442,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   destLabel: {
-    color: C.paraTitle,
+    color: C.paraSub,
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1,
