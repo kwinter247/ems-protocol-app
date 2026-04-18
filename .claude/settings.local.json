@@ -12,7 +12,8 @@
       "Bash(npx tsc:*)",
       "Bash(cmd.exe:*)",
       "Bash(npm list:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git commit *)"
     ]
   }
 }

@@ -15,6 +15,8 @@ import { colors } from '@/constants/colors';
 import SeizureFlowchart from '@/components/protocols/SeizureFlowchart';
 import ChestPainFlowchart from '@/components/protocols/ChestPainFlowchart';
 import StrokeTIAFlowchart from '@/components/protocols/StrokeTIAFlowchart';
+import AirwayManagementFlowchart from '@/components/protocols/AirwayManagementFlowchart';
+import RSIFlowchart from '@/components/protocols/RSIFlowchart';
 import CardiacArrestShockableFlowchart from '@/components/protocols/CardiacArrestShockableFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
@@ -39,6 +41,14 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   'stroke-tia': {
     title: 'Stroke / TIA',
     subtitle: 'Adult & Pediatric',
+  },
+  'airway-management': {
+    title: 'Airway Management',
+    subtitle: 'Adult & Pediatric',
+  },
+  'rsi': {
+    title: 'RSI',
+    subtitle: 'Rapid Sequence Intubation',
   },
   'cardiac-arrest-shockable': {
     title: 'Cardiac Arrest — Shockable (VF/VT)',
@@ -129,6 +139,8 @@ export default function ProtocolViewer() {
           <Animated.View style={[styles.svgWrapper, animStyle]}>
             {id === 'chest-pain' ? <ChestPainFlowchart /> :
              id === 'stroke-tia' ? <StrokeTIAFlowchart /> :
+             id === 'airway-management' ? <AirwayManagementFlowchart /> :
+             id === 'rsi' ? <RSIFlowchart /> :
              id === 'cardiac-arrest-shockable' ? <CardiacArrestShockableFlowchart /> :
              <SeizureFlowchart />}
           </Animated.View>

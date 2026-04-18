@@ -46,7 +46,7 @@ const PROTOCOLS = [
     category: 'Airway',
     scope: 'Both',
   },
-{
+  {
     id: 'cardiac-arrest-shockable',
     title: 'Cardiac Arrest — Shockable (VF/VT)',
     subtitle: 'Adult & Pediatric',
