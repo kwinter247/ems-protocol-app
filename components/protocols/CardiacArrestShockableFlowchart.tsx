@@ -715,14 +715,14 @@ export default function CardiacArrestShockableFlowchart() {
         {/* step11 → dec3 (enter diamond at DCX) */}
         <Arrow x1={DCX} y1={l.step11.bot} x2={DCX} y2={l.dec3.top} />
 
-        {/* dec3 diamond — After 4 rounds? */}
+        {/* dec3 diamond — 4 rounds completed, still no ROSC? */}
         <Diamond
           cx={DCX}
           cy={d3mid}
           w={DW}
           h={l.dec3.bot - l.dec3.top}
-          text="After 4 rounds?"
-          subText="No ROSC"
+          text="4 rounds completed,"
+          subText="still no ROSC?"
         />
 
         {/* dec3 YES → step12
@@ -739,26 +739,26 @@ export default function CardiacArrestShockableFlowchart() {
           YES
         </SvgText>
 
-        {/* dec3 NO — loop back up (left side arc back to step7) */}
-        {/* Left-side loop: left of dec3 → up → left of step7 → into step7 left */}
-        <Path
-          d={`M ${BX + 15} ${d3mid} L ${BX - 12} ${d3mid} L ${BX - 12} ${(l.step7.top + l.step7.bot) / 2} L ${BX + 15} ${(l.step7.top + l.step7.bot) / 2}`}
-          stroke={C.arrow}
-          strokeWidth={1.5}
-          fill="none"
-          markerEnd="url(#arrowhead)"
-        />
+        {/* dec3 NO — continue rounds (right-side callout, matches dec2 pattern)
+            Label "NO" sits ABOVE the horizontal line per convention. */}
+        <ConnLine x1={DXR} y1={d3mid} x2={CBX} y2={d3mid} />
         <SvgText
-          x={BX - 16}
-          y={(d3mid + (l.step7.top + l.step7.bot) / 2) / 2}
-          fontSize={10}
+          x={(DXR + CBX) / 2}
+          y={d3mid - 6}
+          fontSize={11}
           fill={C.label}
           fontWeight="700"
           textAnchor="middle"
-          transform={`rotate(-90, ${BX - 16}, ${(d3mid + (l.step7.top + l.step7.bot) / 2) / 2})`}
         >
-          NO — CONTINUE
+          NO
         </SvgText>
+        {calloutBox(
+          d3mid,
+          ['Continue rounds', '(loop Step 5)'],
+          C.paraBg,
+          C.paraBorder,
+          C.paraTitle,
+        )}
 
         {/* Footer */}
         <SvgText
@@ -799,7 +799,7 @@ export default function CardiacArrestShockableFlowchart() {
         style={[styles.titleBox, { marginHorizontal: BX }]}
       >
         <Text style={styles.titleText}>
-          Cardiac Arrest — Shockable Rhythms
+          Cardiac Arrest — ⚡ Shockable Rhythms
         </Text>
         <Text style={styles.titleSub}>
           VF / Pulseless VT · Adult &amp; Pediatric
@@ -1062,17 +1062,34 @@ export default function CardiacArrestShockableFlowchart() {
       <View style={{ height: GAP }} />
 
       {/* Display: STEP 9 — Continue resuscitation (internally 'step11') */}
-      {P(
-        'step11',
-        'STEP 9',
-        'Continue Resuscitation',
-        [
-          'Repeat 2-min compression cycles',
-          'Check rhythm / defibrillate every 2 min',
-          'Continue Epinephrine every 3–5 min (max 3 total doses)',
-          'Reassess for reversible causes each round',
-        ],
-      )}
+      <View
+        onLayout={measure('step11')}
+        style={[
+          styles.stepBox,
+          { backgroundColor: C.paraBg, borderColor: C.paraBorder, marginHorizontal: BX },
+        ]}
+      >
+        <View style={styles.stepHeader}>
+          <Text style={[styles.stepLabel, { color: C.paraSub }]}>STEP 9</Text>
+          <ScopeBadge scope="PARAMEDIC" />
+        </View>
+        <Text style={[styles.stepTitle, { color: C.paraTitle }]}>
+          Continue Resuscitation
+        </Text>
+        <Text style={styles.stepEndpoint}>4 Rounds OR until ROSC</Text>
+        <Text style={[styles.bullet, { color: C.paraSub }]}>
+          • Repeat 2-min compression cycles
+        </Text>
+        <Text style={[styles.bullet, { color: C.paraSub }]}>
+          • Check rhythm / defibrillate every 2 min
+        </Text>
+        <Text style={[styles.bullet, { color: C.paraSub }]}>
+          • Continue Epinephrine every 3–5 min (max 3 total doses)
+        </Text>
+        <Text style={[styles.bullet, { color: C.paraSub }]}>
+          • Reassess for reversible causes each round
+        </Text>
+      </View>
 
       <View style={{ height: GAP }} />
 
@@ -1122,17 +1139,14 @@ const styles = StyleSheet.create({
 
   // Title
   titleBox: {
-    backgroundColor: C.destBg,
-    borderColor: C.destBorder,
-    borderWidth: 2,
-    borderRadius: 8,
+    backgroundColor: 'transparent',
     paddingVertical: 12,
     paddingHorizontal: 14,
     alignItems: 'center',
   },
   titleText: {
-    color: C.destText,
-    fontSize: 17,
+    color: C.emtTitle,
+    fontSize: 18,
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: 0.4,
@@ -1225,6 +1239,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
+  },
+  stepEndpoint: {
+    color: C.warnText,
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 6,
+    letterSpacing: 0.4,
   },
   bullet: {
     fontSize: 11,
