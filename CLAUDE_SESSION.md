@@ -10,6 +10,38 @@ Last updated: April 18, 2026
 - **GitHub** — version control, source of truth
 - **Expo Go (Android, Samsung Note 10+)** — live device testing
 
+## Project Workflow Quirks
+- **File handoff:** Claude Chat generates component files → Kyle downloads → drags into `C:\Users\KyleW\ems-protocol-app`. No Claude Code, no terminal file ops.
+- **Commands:** Always Command Prompt, never PowerShell. (PowerShell blocks npx on this machine.)
+- **Expo start:** `npm run dev` only — NOT `npx expo start`. Tunnel mode doesn't work (Windows ARM64, no ngrok binary). LAN mode with static IP `192.168.68.100`.
+- **Device:** Always re-scan QR code fresh each session — never rely on cached Expo Go connection.
+- **Git:** Kyle pushes to `main` via Command Prompt when each protocol is complete. Don't write git commands assuming knowledge — spell out every flag.
+- **Adding a new protocol requires THREE file edits — always provide all three in the same response:**
+  1. Create `components/protocols/[Name]Flowchart.tsx`
+  2. Edit `app/protocol/[id].tsx` (import + routing)
+  3. Edit `app/(tabs)/protocols.tsx` (PROTOCOLS array + CATEGORIES if new category)
+  Skipping #3 means the protocol won't appear in the list.
+- **Session continuity:** Start each new chat by pasting (1) this doc, (2) the full source of `SeizureFlowchart.tsx`, (3) the source of the protocol being edited. Do not reconstruct files from descriptions — always paste actual source.
+
+---
+
+## End Goal
+Ship to **iOS App Store and Google Play** as the production artifact. This shapes near-term decisions:
+- No localStorage shortcuts — all data bundled or in Supabase
+- All protocol assets bundled for offline use (EMS often works in cell-dead zones)
+- Medical disclaimer visible on every protocol screen
+- No hardcoded secrets (API keys live in EAS secrets, not in source)
+- EAS Build pipeline configured before feature-complete
+
+**Distribution phases:**
+- **Phase 1:** Avondale Fire internal trial (TestFlight iOS / Google Play internal testing track)
+- **Phase 2:** Valley-wide pitch to other Phoenix metro EMS agencies
+- **Phase 3:** National SaaS — same platform engine, swappable protocol content per jurisdiction
+
+Every architecture decision should pass the "does this hold up in the App Store review and in a cell-dead basement on a code" test.
+
+---
+
 ## How to Resume Development
 1. Open **Command Prompt** (Windows key → type `cmd` → Enter). NOT PowerShell.
 2. Launch Expo (Window 1):
