@@ -152,6 +152,50 @@ function calloutBox(
   );
 }
 
+// ── Wide ROSC callout — per-line styling, wider box for transport annotation ──
+// Each line carries its own color + weight. Used for both dec2 and dec3 YES
+// callouts so they render identically. Box width CBW_D1 (170) to fit the
+// "Transport to CRC..." annotation line.
+interface CalloutLine { text: string; color: string; weight: '400' | '600' | '700' }
+function wideCalloutBox(
+  midY: number,
+  lines: CalloutLine[],
+  bg: string,
+  border: string,
+) {
+  const textBlockH = (lines.length - 1) * CALLOUT_LINE_H + 10;
+  const boxH = textBlockH + CALLOUT_PAD * 2;
+  const top = midY - boxH / 2;
+  const firstBaselineY = top + CALLOUT_PAD + 8;
+  return (
+    <>
+      <Rect
+        x={CBX_D1}
+        y={top}
+        width={CBW_D1}
+        height={boxH}
+        rx={6}
+        fill={bg}
+        stroke={border}
+        strokeWidth={1.5}
+      />
+      {lines.map((line, i) => (
+        <SvgText
+          key={i}
+          x={CBX_D1 + CBW_D1 / 2}
+          y={firstBaselineY + i * CALLOUT_LINE_H}
+          fontSize={9.5}
+          fill={line.color}
+          textAnchor="middle"
+          fontWeight={line.weight}
+        >
+          {line.text}
+        </SvgText>
+      ))}
+    </>
+  );
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 // Generic step box
@@ -325,6 +369,8 @@ function Diamond({
   h,
   text,
   subText,
+  textSize = 11,
+  subTextSize = 11,
 }: {
   cx: number;
   cy: number;
@@ -332,6 +378,8 @@ function Diamond({
   h: number;
   text: string;
   subText?: string;
+  textSize?: number;
+  subTextSize?: number;
 }) {
   const hw = w / 2;
   const hh = h / 2;
@@ -345,13 +393,13 @@ function Diamond({
         strokeWidth={2}
       />
       {/* Two-line: center the text block on dCY
-          Main line (11pt, blue): baseline at dCY - 3
-          Sub line  (11pt, white-ish): baseline at dCY + 12
+          Main line: baseline at dCY - 3
+          Sub line:  baseline at dCY + 12
           Visual block centerline ≈ dCY. */}
       <SvgText
         x={dCX}
         y={subText ? dCY - 3 : dCY + 4}
-        fontSize={11}
+        fontSize={textSize}
         fill={C.decText}
         textAnchor="middle"
         fontWeight="700"
@@ -362,7 +410,7 @@ function Diamond({
         <SvgText
           x={dCX}
           y={dCY + 12}
-          fontSize={11}
+          fontSize={subTextSize}
           fill={C.emtTitle}
           textAnchor="middle"
           fontWeight="600"
@@ -371,6 +419,38 @@ function Diamond({
         </SvgText>
       )}
     </>
+  );
+}
+
+// ─── CircleArrow: small inline circular-arrow icon (cycle indicator) ─────────
+// Inline SVG sized to sit next to 12pt text. Stroked circle (~270° arc) with a
+// small arrowhead at the end to indicate rotation. Used on Step 9's
+// "4 Rounds OR until ROSC" endpoint line.
+function CircleArrow({ size = 14, color = '#e6edf3', strokeWidth = 1.8 }:
+  { size?: number; color?: string; strokeWidth?: number }) {
+  // viewBox 24×24, centered at 12,12, radius 8
+  // Arc from 45° (top-right) sweeping clockwise back around to ~0° (right),
+  // leaving a small gap for the arrowhead to sit visually at the start.
+  // Path: M (start) A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      {/* Main arc — clockwise, ~300° sweep */}
+      <Path
+        d="M 17.66 6.34 A 8 8 0 1 1 6.34 6.34"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* Arrowhead at the end of the arc (top-right area) */}
+      <Path
+        d="M 17.66 6.34 L 14.5 5.2 M 17.66 6.34 L 16.6 9.6"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeLinecap="round"
+      />
+    </Svg>
   );
 }
 
@@ -445,8 +525,8 @@ export default function CardiacArrestShockableFlowchart() {
     const d2mid = (l.dec2.top + l.dec2.bot) / 2;
     const d3mid = (l.dec3.top + l.dec3.bot) / 2;
 
-    // total SVG height
-    const svgH = l.step12.bot + 80;
+    // total SVG height — SVG content now ends at step12.bot (footer moved to RN)
+    const svgH = l.step12.bot + 20;
 
     return (
       <Svg
@@ -677,11 +757,11 @@ export default function CardiacArrestShockableFlowchart() {
           text="ROSC?"
         />
 
-        {/* dec2 YES → step13 ROSC care (right callout)
+        {/* dec2 YES → ROSC care (right callout — wide variant)
             Label "YES" sits ABOVE the horizontal line per convention. */}
-        <Arrow x1={DXR} y1={d2mid} x2={CBX} y2={d2mid} />
+        <Arrow x1={DXR} y1={d2mid} x2={CBX_D1} y2={d2mid} />
         <SvgText
-          x={(DXR + CBX) / 2}
+          x={(DXR + CBX_D1) / 2}
           y={d2mid - 6}
           fontSize={11}
           fill={C.label}
@@ -690,12 +770,16 @@ export default function CardiacArrestShockableFlowchart() {
         >
           YES
         </SvgText>
-        {calloutBox(
+        {wideCalloutBox(
           d2mid,
-          ['→ ROSC Care', 'Protocol', '(Post-Arrest)'],
+          [
+            { text: '→ ROSC Care Protocol', color: C.paraTitle, weight: '700' },
+            { text: '(Post-Arrest)', color: C.paraTitle, weight: '600' },
+            { text: 'Transport to CRC', color: C.emtTitle, weight: '700' },
+            { text: '(or closest if >15 min)', color: C.emtTitle, weight: '700' },
+          ],
           C.paraBg,
           C.paraBorder,
-          C.paraTitle,
         )}
 
         {/* dec2 NO → step11
@@ -715,18 +799,20 @@ export default function CardiacArrestShockableFlowchart() {
         {/* step11 → dec3 (enter diamond at DCX) */}
         <Arrow x1={DCX} y1={l.step11.bot} x2={DCX} y2={l.dec3.top} />
 
-        {/* dec3 diamond — 4 rounds completed, still no ROSC? */}
+        {/* dec3 diamond — ROSC? (After 4 rounds) */}
         <Diamond
           cx={DCX}
           cy={d3mid}
           w={DW}
           h={l.dec3.bot - l.dec3.top}
-          text="4 rounds completed,"
-          subText="still no ROSC?"
+          text="ROSC?"
+          subText="(After 4 rounds)"
+          textSize={14}
+          subTextSize={10}
         />
 
-        {/* dec3 YES → step12
-            Label "YES" sits slightly RIGHT of the vertical line per convention. */}
+        {/* dec3 NO → step12 (TOR / Transport)
+            Label "NO" sits slightly RIGHT of the vertical line per convention. */}
         <Arrow x1={DCX} y1={l.dec3.bot} x2={DCX} y2={l.step12.top} />
         <SvgText
           x={DCX + 6}
@@ -736,51 +822,33 @@ export default function CardiacArrestShockableFlowchart() {
           fontWeight="700"
           textAnchor="start"
         >
-          YES
+          NO
         </SvgText>
 
-        {/* dec3 NO — continue rounds (right-side callout, matches dec2 pattern)
-            Label "NO" sits ABOVE the horizontal line per convention. */}
-        <ConnLine x1={DXR} y1={d3mid} x2={CBX} y2={d3mid} />
+        {/* dec3 YES → ROSC Care Protocol (right-side callout, matches dec2)
+            Label "YES" sits ABOVE the horizontal line per convention. */}
+        <ConnLine x1={DXR} y1={d3mid} x2={CBX_D1} y2={d3mid} />
         <SvgText
-          x={(DXR + CBX) / 2}
+          x={(DXR + CBX_D1) / 2}
           y={d3mid - 6}
           fontSize={11}
           fill={C.label}
           fontWeight="700"
           textAnchor="middle"
         >
-          NO
+          YES
         </SvgText>
-        {calloutBox(
+        {wideCalloutBox(
           d3mid,
-          ['Continue rounds', '(loop Step 5)'],
+          [
+            { text: '→ ROSC Care Protocol', color: C.paraTitle, weight: '700' },
+            { text: '(Post-Arrest)', color: C.paraTitle, weight: '600' },
+            { text: 'Transport to CRC', color: C.emtTitle, weight: '700' },
+            { text: '(or closest if >15 min)', color: C.emtTitle, weight: '700' },
+          ],
           C.paraBg,
           C.paraBorder,
-          C.paraTitle,
         )}
-
-        {/* Footer */}
-        <SvgText
-          x={cx}
-          y={l.step12.bot + 20}
-          fontSize={10}
-          fill={C.discText}
-          textAnchor="middle"
-        >
-          Central Arizona Regional EMS Guidelines · Chapter 3 · Effective Jan
-          12, 2026
-        </SvgText>
-        <SvgText
-          x={cx}
-          y={l.step12.bot + 36}
-          fontSize={10}
-          fill={C.discText}
-          textAnchor="middle"
-        >
-          Reference aid only — does not replace online medical direction or
-          clinical judgment.
-        </SvgText>
       </Svg>
     );
   }
@@ -1076,15 +1144,36 @@ export default function CardiacArrestShockableFlowchart() {
         <Text style={[styles.stepTitle, { color: C.paraTitle }]}>
           Continue Resuscitation
         </Text>
-        <Text style={styles.stepEndpoint}>4 Rounds OR until ROSC</Text>
+        <View style={styles.endpointRow}>
+          <Text style={[styles.stepEndpoint, { color: C.emtTitle, marginBottom: 0 }]}>
+            4 Rounds OR until ROSC
+          </Text>
+          <Text style={styles.cycleIcon}>  🔄</Text>
+        </View>
+        <Text style={[styles.cycleSub, { color: C.emtSub }]}>
+          Compressions / rhythm / shock / Epi (max 3)
+        </Text>
+        <View style={{ height: 8 }} />
         <Text style={[styles.bullet, { color: C.paraSub }]}>
           • Repeat 2-min compression cycles
+          <Text style={styles.backRef}>  → Step 1</Text>
         </Text>
         <Text style={[styles.bullet, { color: C.paraSub }]}>
-          • Check rhythm / defibrillate every 2 min
+          • Check rhythm /{' '}
+          <Text style={{ color: C.destText, fontWeight: '700' }}>
+            defibrillate every 2 min ⚡
+          </Text>
+          <Text style={styles.backRef}>  → Step 6</Text>
         </Text>
         <Text style={[styles.bullet, { color: C.paraSub }]}>
-          • Continue Epinephrine every 3–5 min (max 3 total doses)
+          •{' '}
+          <Text style={{ color: C.critTitle }}>
+            Continue Epinephrine every 3–5 min
+          </Text>{' '}
+          <Text style={{ color: C.emtTitle, fontWeight: '700' }}>
+            (max 3 total doses)
+          </Text>
+          <Text style={styles.backRef}>  → Step 7</Text>
         </Text>
         <Text style={[styles.bullet, { color: C.paraSub }]}>
           • Reassess for reversible causes each round
@@ -1097,33 +1186,83 @@ export default function CardiacArrestShockableFlowchart() {
       <View onLayout={measure('dec3')} style={{ height: 72, marginHorizontal: BX }} />
       <View style={{ height: GAP }} />
 
-      {/* Display: STEP 10 — TOR / Transport decision (internally 'step12') */}
+      {/* Display: STEP 10 — Transport Decision (internally 'step12') */}
       <View
         onLayout={measure('step12')}
-        style={[styles.destBox, { marginHorizontal: BX }]}
+        style={[
+          styles.stepBox,
+          { backgroundColor: C.emtBg, borderColor: C.emtBorder, marginHorizontal: BX },
+        ]}
       >
         <View style={styles.stepHeader}>
-          <Text style={styles.destLabel}>STEP 10</Text>
+          <Text style={[styles.stepLabel, { color: C.emtSub }]}>STEP 10</Text>
           <ScopeBadge scope="PARAMEDIC" />
         </View>
-        <Text style={styles.destTitle}>Transport / TOR Decision</Text>
-        <Text style={styles.destBullet}>
-          • Transport to Cardiac Receiving Center (CRC) if ROSC achieved
+        <Text style={[styles.stepTitle, { color: C.emtTitle }]}>Transport Decision</Text>
+
+        {/* TOR jump-out sub-box — red palette, first after title */}
+        <View style={[styles.torJumpBox, { marginTop: 4, marginBottom: 8 }]}>
+          <Text style={styles.torJumpTitle}>
+            No ROSC after 4 rounds, non-shockable rhythm?
+          </Text>
+          <Text style={styles.torJumpBody}>
+            → See <Text style={{ fontWeight: '700' }}>Non-Traumatic TOR</Text> protocol
+          </Text>
+        </View>
+
+        <Text style={[styles.bullet, { color: C.emtSub }]}>
+          • <Text style={{ color: C.destText, fontWeight: '700' }}>Refractory VF / VT</Text> → Load &amp; transport, continue resuscitation en route (up to 60 min from dispatch)
         </Text>
-        <Text style={styles.destBullet}>
-          • If no ROSC and ≥4 rounds: consider Non-Traumatic TOR protocol
+        <Text style={[styles.bullet, { color: C.emtSub }]}>
+          • <Text style={{ color: C.emtTitle, fontWeight: '700' }}>CRC bypass</Text> if ongoing CPR without ROSC OR CRC adds &gt;15 min transport → closest appropriate facility
         </Text>
-        <Text style={styles.destBullet}>
-          • CRC bypass if: ongoing CPR without ROSC OR CRC adds &gt;15 min
-          transport
-        </Text>
-        <Text style={styles.destBullet}>
-          • On ROSC → refer to Post-Cardiac Arrest / ROSC Care protocol
+        <Text style={[styles.bullet, { color: C.emtSub }]}>
+          • <Text style={{ color: C.paraTitle, fontWeight: '700' }}>ROSC achieved</Text> → Transport to Cardiac Receiving Center (CRC); refer to Post-Cardiac Arrest / ROSC Care
         </Text>
       </View>
 
+      {/* TOR reminder block — visible clinical warning, RN-rendered */}
+      <View style={{ height: GAP }} />
+      <View style={[styles.torReminderBox, { marginHorizontal: BX }]}>
+        <Text style={[styles.torReminderTitle, { textAlign: 'center' }]}>
+          ⚠ TOR Exclusions — Do not terminate without OLMD
+        </Text>
+        <Text style={[styles.torReminderBody, { textAlign: 'center' }]}>
+          Hypothermia · Lightning strike · Submersion / drowning · Age &lt; 18
+        </Text>
+        <Text style={[styles.torReminderBody, { marginTop: 4, color: C.destText, fontWeight: '700', textAlign: 'center' }]}>
+          All TOR requires on-line medical direction.
+        </Text>
+      </View>
+
+      {/* Acronym glossary */}
+      <View style={{ height: 14 }} />
+      <View style={[styles.acronymBox, { marginHorizontal: BX }]}>
+        <Text style={styles.acronymLine}>
+          <Text style={styles.acronymKey}>ROSC</Text> — Return of Spontaneous Circulation
+        </Text>
+        <Text style={styles.acronymLine}>
+          <Text style={styles.acronymKey}>CRC</Text> — Cardiac Receiving Center
+        </Text>
+        <Text style={styles.acronymLine}>
+          <Text style={styles.acronymKey}>TOR</Text> — Termination of Resuscitation
+        </Text>
+        <Text style={styles.acronymLine}>
+          <Text style={styles.acronymKey}>OLMD</Text> — On-Line Medical Direction
+        </Text>
+      </View>
+
+      {/* Disclaimer footer — moved from SVG to RN so it sits below the TOR reminder */}
+      <View style={{ height: 20 }} />
+      <Text style={styles.footerLine}>
+        Central Arizona Regional EMS Guidelines · Chapter 3 · Effective Jan 12, 2026
+      </Text>
+      <Text style={styles.footerLine}>
+        Reference aid only — does not replace online medical direction or clinical judgment.
+      </Text>
+
       {/* SVG overlay — rendered last so it sits on top */}
-      <View style={{ height: 56 }} />
+      <View style={{ height: 24 }} />
       {ready && renderSVG()}
     </View>
   );
@@ -1246,6 +1385,28 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 6,
     letterSpacing: 0.4,
+  },
+  cycleSub: {
+    fontSize: 11,
+    fontWeight: '500',
+    fontStyle: 'italic',
+    marginBottom: 2,
+    letterSpacing: 0.2,
+  },
+  endpointRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  cycleIcon: {
+    fontSize: 16,
+    lineHeight: 18,
+  },
+  backRef: {
+    fontSize: 10,
+    fontStyle: 'italic',
+    color: '#6e7681',
+    fontWeight: '400',
   },
   bullet: {
     fontSize: 11,
@@ -1479,5 +1640,72 @@ const styles = StyleSheet.create({
     color: C.paraSub,
     fontSize: 11,
     lineHeight: 18,
+  },
+
+  // TOR jump-out sub-box — inside Step 10, references separate TOR protocol
+  torJumpBox: {
+    backgroundColor: C.destBg,
+    borderColor: C.destBorder,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  torJumpTitle: {
+    color: C.destText,
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  torJumpBody: {
+    color: C.emtTitle,
+    fontSize: 11,
+    lineHeight: 15,
+  },
+
+  // TOR reminder block — standalone clinical warning below Step 10
+  torReminderBox: {
+    backgroundColor: C.warnBg,
+    borderColor: C.warnBorder,
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  torReminderTitle: {
+    color: C.warnText,
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 3,
+    letterSpacing: 0.2,
+  },
+  torReminderBody: {
+    color: C.emtTitle,
+    fontSize: 11,
+    lineHeight: 15,
+  },
+
+  // Footer lines — RN-rendered (moved out of SVG)
+  footerLine: {
+    color: C.discText,
+    fontSize: 10,
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+
+  // Acronym glossary — small reference block below TOR exclusion box
+  acronymBox: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  acronymLine: {
+    color: C.emtSub,
+    fontSize: 10,
+    lineHeight: 15,
+    textAlign: 'center',
+  },
+  acronymKey: {
+    color: C.emtTitle,
+    fontWeight: '700',
   },
 });
