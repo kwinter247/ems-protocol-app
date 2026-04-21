@@ -53,8 +53,14 @@ const PROTOCOLS = [
     category: 'Cardiac Arrest',
     scope: 'Both',
   },
+  {
+    id: 'non-traumatic-tor',
+    title: 'Non-Traumatic TOR',
+    subtitle: 'Termination of Resuscitation · Adult & Pediatric',
+    category: 'Cardiac Arrest',
+    scope: 'Paramedic',
+  },
 ];
-
 const CATEGORIES = ['Cardiac Arrest', 'Airway', 'Cardiovascular', 'Neurological'];
 
 const SCOPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
