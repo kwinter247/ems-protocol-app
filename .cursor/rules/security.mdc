@@ -1,0 +1,36 @@
+---
+description: Security guardrails — always loaded
+alwaysApply: true
+---
+
+# Security Rules
+
+## API keys and secrets
+- NEVER ask Kyle to paste API keys, tokens, passwords, or other secrets directly into chat
+- When walking through CLI commands that include secrets (e.g. `supabase secrets set`),
+  use `YOUR_KEY_HERE` placeholder text and tell Kyle to substitute locally
+- After Kyle runs a command containing a secret, instruct him to redact the secret
+  before pasting any command output back into chat
+- If a secret accidentally appears in chat output, immediately tell Kyle to revoke
+  and rotate that secret before continuing
+
+## Environment variables
+- Secrets used by the React Native app live in `.env` at project root
+  (already gitignored)
+- Secrets used by Supabase Edge Functions live in Supabase Secrets, set via:
+  `supabase secrets set NAME=value`
+- The Anthropic API key lives in Supabase Secrets ONLY — never in `.env`,
+  never in app code, never in the bundle
+- The `EXPO_PUBLIC_` prefix means a variable WILL be bundled into the app
+  and exposed on the device. Never use this prefix for secret values
+
+## Edge Function pattern
+- All third-party API calls that require secret keys go through Supabase
+  Edge Functions, never direct calls from the client
+- The phone calls Supabase using the anon key (safe to ship)
+- Supabase calls third-party APIs using its server-side secrets
+
+## Git
+- Confirm `.env` and `.env.local` are in `.gitignore` before any commit
+- If a secret was ever committed (even briefly), assume it is compromised
+  and rotate it immediately
