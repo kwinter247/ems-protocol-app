@@ -71,7 +71,11 @@ export default function ScenarioScreen() {
     try {
       const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
       const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-      const response = await fetch(`${supabaseUrl}/functions/v1/scenario`, {
+      const scenarioUrl = `${supabaseUrl}/functions/v1/scenario`;
+      console.log('[Scenario AI] Supabase URL:', supabaseUrl);
+      console.log('[Scenario AI] Supabase anon key exists:', !!supabaseAnonKey);
+      console.log('[Scenario AI] Calling URL:', scenarioUrl);
+      const response = await fetch(scenarioUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,6 +88,9 @@ export default function ScenarioScreen() {
           weight: weightKg !== null ? String(weightKg.toFixed(1)) : (weight.trim() || undefined),
         }),
       });
+      console.log('[Scenario AI] Response status:', response.status);
+      console.log('[Scenario AI] Response ok:', response.ok);
+      console.log('[Scenario AI] Response content-type:', response.headers.get('content-type'));
 
       const data = await response.json();
 
@@ -94,6 +101,13 @@ export default function ScenarioScreen() {
 
       setResult(data);
     } catch (err) {
+      const error = err as Error;
+      console.log('[Scenario AI] Error message:', error?.message);
+      console.log('[Scenario AI] Error name:', error?.name);
+      console.log(
+        '[Scenario AI] Error full:',
+        JSON.stringify(error, Object.getOwnPropertyNames(error))
+      );
       setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);

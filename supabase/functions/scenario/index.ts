@@ -1,130 +1,169 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const corsHeaders = {
+const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type, Apikey",
 };
 
-const systemPrompt = `You are an EMS Protocol AI assistant grounded in the Central Arizona Red Book 2026 EMS protocols. When given a patient presentation, analyze the clinical scenario and return ONLY a valid JSON object with the following structure:
+const jsonHeaders: Record<string, string> = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
+};
 
+const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+const MODEL = "claude-sonnet-4-5";
+
+const systemPrompt = `
+You are an EMS clinical decision support tool grounded in Central Arizona Red Book 2026 protocols.
+You must provide concise, protocol-aligned guidance and return ONLY valid JSON.
+
+Return exactly this shape:
 {
-  "protocols": ["array of applicable protocol names from Central Arizona Red Book"],
-  "redFlags": ["array of critical findings requiring immediate action or that indicate high acuity"],
-  "assessmentQuestions": ["array of key history and assessment questions specific to this presentation"],
-  "treatmentSteps": [
+  "applicableProtocols": ["string"],
+  "assessmentQuestions": ["string"],
+  "treatmentPriorities": ["string"],
+  "pediatricFlags": ["string"],
+  "drugOptions": [
     {
-      "step": 1,
-      "action": "Specific action to take",
-      "scope": "EMT"
+      "drug": "string",
+      "dose": "string",
+      "route": "string",
+      "notes": "string"
     }
   ],
-  "drugs": [
-    {
-      "name": "Drug Name",
-      "indication": "Why this drug is indicated",
-      "adultDose": "Adult dose and route",
-      "pedsDose": "Pediatric dose if applicable",
-      "route": "Route(s) of administration",
-      "notes": "Important notes or precautions"
-    }
-  ],
-  "pedsConsiderations": ["array of pediatric-specific considerations — empty array [] if adult patient"],
-  "timeAlerts": ["array of time-sensitive actions with specific time targets, e.g., Door-to-balloon < 90 min for STEMI"]
+  "disclaimers": "string"
 }
 
 Rules:
-1. Base ALL recommendations strictly on Central Arizona Red Book 2026 protocols
-2. Scope must be exactly "EMT", "Paramedic", or "Both" (case-sensitive)
-3. Treatment steps must be numbered sequentially and in order of priority
-4. Red flags should be specific clinical findings, not generic warnings
-5. Time alerts should include specific time targets when protocols define them
-6. Return ONLY the JSON object — no markdown, no code blocks, no additional text`;
+- Base recommendations strictly on Central Arizona Red Book 2026.
+- If not pediatric, set "pediatricFlags" to an empty array.
+- Do not include markdown or any text outside the JSON object.
+`.trim();
 
-Deno.serve(async (req: Request) => {
+function extractJsonObject(rawText: string): string {
+  const fenced = rawText.match(/```json\s*([\s\S]*?)```/i) ?? rawText.match(/```\s*([\s\S]*?)```/i);
+  const candidate = (fenced?.[1] ?? rawText).trim();
+
+  const firstBrace = candidate.indexOf("{");
+  const lastBrace = candidate.lastIndexOf("}");
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
+    throw new Error("No JSON object found in AI response");
+  }
+
+  return candidate.slice(firstBrace, lastBrace + 1);
+}
+
+serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: jsonHeaders,
+    });
+  }
+
   try {
-    const { presentation, age, weight } = await req.json();
+    const body = await req.json();
+    console.log("[scenario] Incoming request body:", body);
 
-    if (!presentation || presentation.trim().length < 10) {
-      return new Response(
-        JSON.stringify({ error: "Please provide a more detailed patient presentation." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const presentation = typeof body?.presentation === "string" ? body.presentation : "";
+    const age = typeof body?.age === "string" ? body.age : undefined;
+    const weight = typeof body?.weight === "string" ? body.weight : undefined;
+
+    if (!presentation.trim()) {
+      return new Response(JSON.stringify({ error: "Presentation is required" }), {
+        status: 400,
+        headers: jsonHeaders,
+      });
     }
 
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "API key not configured." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!anthropicApiKey) {
+      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY is not configured" }), {
+        status: 500,
+        headers: jsonHeaders,
+      });
     }
 
-    const userMessage = `Patient Presentation: ${presentation}
-Age: ${age || "Unknown"}
-Weight: ${weight ? weight + " kg" : "Unknown"}
+    const userLines = [
+      `Presentation: ${presentation.trim()}`,
+      age?.trim() ? `Age: ${age.trim()}` : undefined,
+      weight?.trim() ? `Weight: ${weight.trim()}` : undefined,
+    ].filter(Boolean);
 
-Analyze this EMS scenario and provide structured protocol guidance per Central Arizona Red Book 2026.`;
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const anthropicResponse = await fetch(ANTHROPIC_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "x-api-key": anthropicApiKey,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: MODEL,
         max_tokens: 2048,
         system: systemPrompt,
-        messages: [{ role: "user", content: userMessage }],
+        messages: [
+          {
+            role: "user",
+            content: userLines.join("\n"),
+          },
+        ],
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Anthropic API error:", errorText);
+    console.log("[scenario] Anthropic response status:", anthropicResponse.status);
+
+    if (!anthropicResponse.ok) {
+      const errorText = await anthropicResponse.text();
+      console.error("[scenario] Anthropic non-200 response:", errorText);
+      return new Response(JSON.stringify({ error: errorText || "Anthropic API request failed" }), {
+        status: 502,
+        headers: jsonHeaders,
+      });
+    }
+
+    const anthropicData = await anthropicResponse.json();
+    const rawText = anthropicData?.content?.[0]?.text;
+
+    if (typeof rawText !== "string" || !rawText.trim()) {
+      return new Response(JSON.stringify({ error: "Anthropic response did not include text content" }), {
+        status: 502,
+        headers: jsonHeaders,
+      });
+    }
+
+    let parsedOutput: unknown;
+    try {
+      const extractedJson = extractJsonObject(rawText);
+      parsedOutput = JSON.parse(extractedJson);
+    } catch (parseError) {
+      console.error("[scenario] Failed to parse AI response:", parseError);
       return new Response(
-        JSON.stringify({ error: "Failed to get AI response. Please try again." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          error: "Failed to parse AI response",
+          raw: rawText,
+        }),
+        {
+          status: 500,
+          headers: jsonHeaders,
+        },
       );
     }
 
-    const data = await response.json();
-    const content = data.content?.[0]?.text;
-
-    if (!content) {
-      return new Response(
-        JSON.stringify({ error: "No response content received from AI." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const cleanedContent = content
-      .replace(/^```json\s*/i, "")
-      .replace(/^```\s*/i, "")
-      .replace(/```\s*$/i, "")
-      .trim();
-
-    const parsed = JSON.parse(cleanedContent);
-    return new Response(JSON.stringify(parsed), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify(parsedOutput), {
+      status: 200,
+      headers: jsonHeaders,
     });
-  } catch (error) {
-    console.error("Scenario edge function error:", error);
-    if (error instanceof SyntaxError) {
-      return new Response(
-        JSON.stringify({ error: "Failed to parse AI response. Please try again." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    return new Response(
-      JSON.stringify({ error: "An unexpected error occurred. Please try again." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  } catch (err) {
+    console.error("[scenario] Edge function error:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: jsonHeaders,
+    });
   }
 });
