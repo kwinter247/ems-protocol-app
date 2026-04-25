@@ -1,0 +1,38 @@
+---
+description: Core project rules — always loaded
+alwaysApply: true
+---
+
+# EMS Protocol App — Core Rules
+
+## What this is
+React Native + Expo Router app for paramedics. Visual decision-tree flowcharts replace paragraph-form EMS protocols. Source: Central Arizona Red Book 2026.
+
+## Tech stack
+- React Native, Expo SDK 54, Expo Router
+- react-native-svg (flowcharts)
+- react-native-gesture-handler + react-native-reanimated (pinch zoom)
+- Supabase (backend)
+- Anthropic Claude API (Scenario AI feature)
+
+## Communication
+- Direct, no hand-holding, no excessive disclaimers
+- Concrete file paths and exact commands — Kyle is not a developer
+- Call out bad ideas explicitly — don't write polite workarounds
+- Don't re-suggest tunnel mode for Expo. LAN mode only.
+- Use Command Prompt, not PowerShell
+- Tests live on Samsung Note 10+ via Expo Go
+
+## CRITICAL — Three-file rule for new protocols
+Adding any new protocol REQUIRES editing three files in the same response:
+1. CREATE `components/protocols/[Name]Flowchart.tsx`
+2. EDIT `app/protocol/[id].tsx` — add import + PROTOCOL_META entry + ternary case
+3. EDIT `app/(tabs)/protocols.tsx` — add to PROTOCOLS array (and CATEGORIES if new)
+
+Skipping #3 = protocol won't appear in list.
+Skipping #2 = route won't render the new component.
+
+## Master template
+`components/protocols/SeizureFlowchart.tsx` is the v2 master template.
+ALL new flowcharts copy its architecture exactly. Do NOT reconstruct from description.
+When generating a new flowchart, read SeizureFlowchart.tsx first, then copy its structure.

@@ -1,0 +1,55 @@
+---
+description: v2 flowchart visual standards
+globs:
+  - components/protocols/*.tsx
+alwaysApply: false
+---
+
+# Flowchart v2 Architecture
+
+## Structure
+- Pure RN Views in flex column for step boxes (no fixed Y constants)
+- SVG overlay using onLayout measurements for arrows, diamonds, callout boxes
+- `ready` flag gates SVG rendering until all measurements collected
+
+## Canvas constants
+- W = 470, BW = 440, GAP = 24, STEP_PADDING_V = 10
+- Diamond column: DW = 240, DCX = 135, DXR = 255
+- Callout: CBW = 140, CBX = 315
+- Wide callout variant: CBW_D1 = 170, CBX_D1 = 285
+
+## Arrow routing rules
+- All vertical arrows from a diamond use DCX (135), NOT cx (235).
+  Diagonal arrows = wrong x-coordinate. Common bug.
+- No arrow between EMT bar and first step
+- Arrow terminates at PARAMEDIC bar TOP, no arrow exits bar bottom
+- No GAP spacers after section bars
+
+## Arrow labels
+- Downward YES/NO labels: manual SvgText elements, offset 14px right of arrow shaft
+  at midpoint+4. NEVER use Arrow component's label prop for these (overlaps diamond tips).
+- Horizontal YES labels (diamond → callout): SvgText centered above line at midpoint - 6
+
+## Step box visual rules
+- Step label uses subColor (muted); step title uses bodyColor
+- ScopeBadge uses `tone` prop so badge colors match box theme
+  (no green PARAMEDIC badges on orange/red boxes)
+- Drug-administration boxes: orange (critBg / critBorder)
+- Defibrillate box: RED, not orange. Do not change this.
+- Critical transport destination callouts: red (destBg / destBorder / destText)
+- Callout box heights computed dynamically from text metrics, NEVER hardcoded
+
+## Color tokens
+EMT:           bg #21262d   border #484f58   title #e6edf3   sub #8b949e
+Paramedic:     bg #1b3a2d   border #0F6E56   title #56d364   sub #8fcca0
+Critical/Drug: bg #2a1a0a   border #f0883e   title #f0883e   sub #d29922
+Decision:      bg #1f3a5f   border #185FA5   text  #79c0ff
+Destination:   bg #3a1010   border #d62828   text  #f85149   sub  #e89b9b
+Pediatric:     bg #0a1a2a   border #1f6feb   drug  #58a6ff   dose #a5d6ff
+Warning/Amber: bg #1a1400   border #9e6a03   text  #d29922
+Purple:        bg #1c1029   border #8957e5   title #d2a8ff   sub  #b083f0
+
+## Purple usage
+Purple is the "differentiating clinical move" token. Used on Cardiac Arrest
+Non-Shockable's H's & T's grid. Use sparingly — if every protocol has purple,
+the signal becomes noise.

@@ -1,0 +1,41 @@
+---
+description: Strategic and business context for Alpha Medic
+alwaysApply: false
+---
+
+# Business Context
+
+## Brand & company
+- Product: Alpha Medic (AM)
+- Publisher: Code 3 Tek LLC (C3T) — Arizona LLC, founder Kyle Winterstein
+- Domain: AlphaMedic.app
+- Logo: gradient hexagon with ECG trace through capital A
+
+## Product positioning
+- Reference tool category (Tarascon / Limmer shelf), NOT enterprise medical software
+- Direct competitor: Paramedic Protocol Provider (PPP) — paginated text menus, no visuals, no AI
+- Legacy regional incumbent: CAREMSG — paragraph-form text, unsearchable
+
+## Business model
+- B2C paramedic-direct: $5.99/month or $49.99/year, 7-day free trial
+- Free tier: Universal layer + NASEMSO + limited Scenario AI
+- Paid: Tier 1 visual flowcharts + unlimited Scenario AI
+- Departments are a Phase 8 upsell, not the foundation
+- National scope from launch via region selector. NEVER architect AZ-only assumptions
+
+## Content tiers
+1. Universal: drug ref, dose calculator, hospital quick-call, NASEMSO — every user, day one
+2. Tier 1: hand-built visual flowcharts (currently Central AZ Red Book 2026)
+3. Tier 2: state PDFs in Supabase Storage with full-text search
+4. Tier 3: NASEMSO National Model EMS Clinical Guidelines (NMG) — universal fallback
+
+## Legal model
+Disclaimers + attribution + version dates + source links. Same posture as Tarascon, Limmer, PPP.
+NOT a medical device. NOT pursuing per-agency permissions or formal medical director endorsements.
+Reference publisher posture.
+
+## Build discipline
+- Build for proven demand. Do NOT refactor Phase 1–7 in anticipation of Phase 8 features.
+- Phase 1 priority: finish remaining flowcharts, then PPP gap-closing features
+  (Favorites, Hospital Quick-Call tab, Broselow on Calculator)
+- App Store + Google Play submission target: Q3 2026

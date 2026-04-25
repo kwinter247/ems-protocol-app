@@ -18,6 +18,7 @@ import StrokeTIAFlowchart from '@/components/protocols/StrokeTIAFlowchart';
 import AirwayManagementFlowchart from '@/components/protocols/AirwayManagementFlowchart';
 import RSIFlowchart from '@/components/protocols/RSIFlowchart';
 import CardiacArrestShockableFlowchart from '@/components/protocols/CardiacArrestShockableFlowchart';
+import CardiacArrestNonShockableFlowchart from '@/components/protocols/CardiacArrestNonShockableFlowchart';
 import NonTraumaticTORFlowchart from '@/components/protocols/NonTraumaticTORFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
@@ -53,6 +54,10 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   },
   'cardiac-arrest-shockable': {
     title: 'Cardiac Arrest — Shockable (VF/VT)',
+    subtitle: 'Adult & Pediatric',
+  },
+  'cardiac-arrest-non-shockable': {
+    title: 'Cardiac Arrest — Non-Shockable (Asystole/PEA)',
     subtitle: 'Adult & Pediatric',
   },
   'non-traumatic-tor': {
@@ -146,6 +151,7 @@ export default function ProtocolViewer() {
              id === 'airway-management' ? <AirwayManagementFlowchart /> :
              id === 'rsi' ? <RSIFlowchart /> :
              id === 'cardiac-arrest-shockable' ? <CardiacArrestShockableFlowchart /> :
+             id === 'cardiac-arrest-non-shockable' ? <CardiacArrestNonShockableFlowchart /> :
              id === 'non-traumatic-tor' ? <NonTraumaticTORFlowchart /> :
              <SeizureFlowchart />}
           </Animated.View>

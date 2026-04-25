@@ -54,6 +54,13 @@ const PROTOCOLS = [
     scope: 'Both',
   },
   {
+    id: 'cardiac-arrest-non-shockable',
+    title: 'Cardiac Arrest — Non-Shockable (Asystole/PEA)',
+    subtitle: 'Adult & Pediatric',
+    category: 'Cardiac Arrest',
+    scope: 'Both',
+  },
+  {
     id: 'non-traumatic-tor',
     title: 'Non-Traumatic TOR',
     subtitle: 'Termination of Resuscitation · Adult & Pediatric',

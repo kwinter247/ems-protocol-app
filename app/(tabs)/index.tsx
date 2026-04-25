@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
   },
   categoryScroll: {
     flexGrow: 0,
+    minHeight: 40,
     marginBottom: 4,
   },
   categoryContent: {
