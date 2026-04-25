@@ -58,6 +58,10 @@
 
 ---
 
+- **Cleanup**: Remove diagnostic `console.log` statements from `app/(tabs)/scenario.tsx` (added during Supabase Edge Function migration debug session, April 25 2026). Look for lines starting with `[Scenario AI]`.
+
+---
+
 ## 💡 Raw Ideas (not yet fleshed out — capture fast, flesh out later)
 
 - Shift schedule integration (import from Telestaff / Crewsense / whatever Avondale uses)
