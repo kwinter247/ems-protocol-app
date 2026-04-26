@@ -20,6 +20,7 @@ import RSIFlowchart from '@/components/protocols/RSIFlowchart';
 import CardiacArrestShockableFlowchart from '@/components/protocols/CardiacArrestShockableFlowchart';
 import CardiacArrestNonShockableFlowchart from '@/components/protocols/CardiacArrestNonShockableFlowchart';
 import NonTraumaticTORFlowchart from '@/components/protocols/NonTraumaticTORFlowchart';
+import PainManagementFlowchart from '@/components/protocols/PainManagementFlowchart';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -63,6 +64,10 @@ const PROTOCOL_META: Record<string, { title: string; subtitle: string }> = {
   'non-traumatic-tor': {
     title: 'Non-Traumatic TOR',
     subtitle: 'Termination of Resuscitation · Adult & Pediatric',
+  },
+  'pain-management': {
+    title: 'Pain Management',
+    subtitle: 'Adult & Pediatric',
   },
 };
 const { width: SCREEN_W } = Dimensions.get('window');
@@ -153,6 +158,7 @@ export default function ProtocolViewer() {
              id === 'cardiac-arrest-shockable' ? <CardiacArrestShockableFlowchart /> :
              id === 'cardiac-arrest-non-shockable' ? <CardiacArrestNonShockableFlowchart /> :
              id === 'non-traumatic-tor' ? <NonTraumaticTORFlowchart /> :
+             id === 'pain-management' ? <PainManagementFlowchart /> :
              <SeizureFlowchart />}
           </Animated.View>
         </ScrollView>

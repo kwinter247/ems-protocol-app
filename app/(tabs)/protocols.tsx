@@ -67,8 +67,15 @@ const PROTOCOLS = [
     category: 'Cardiac Arrest',
     scope: 'Paramedic',
   },
+  {
+    id: 'pain-management',
+    title: 'Pain Management',
+    subtitle: 'Adult & Pediatric',
+    category: 'Pain Management',
+    scope: 'Both',
+  },
 ];
-const CATEGORIES = ['Cardiac Arrest', 'Airway', 'Cardiovascular', 'Neurological'];
+const CATEGORIES = ['Cardiac Arrest', 'Pain Management', 'Airway', 'Cardiovascular', 'Neurological'];
 
 const SCOPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   EMT: {

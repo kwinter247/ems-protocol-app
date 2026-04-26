@@ -24,6 +24,8 @@ alwaysApply: false
 - No arrow between EMT bar and first step
 - Arrow terminates at PARAMEDIC bar TOP, no arrow exits bar bottom
 - No GAP spacers after section bars
+- No arrow exits a SectionHeader into the next step box. Section headers function as visual dividers — adding an arrow after them creates redundant noise. Same principle as the existing rule that no arrow exits the bottom of a section bar (EMT/PARAMEDIC bars). This applies to ALL flowcharts going forward.
+- No arrows connect the title block, caution callouts, excludes callouts, or any header/contextual blocks above the first EMT step. These are descriptive context, not sequential flow. The first arrow in any flowchart appears between Step 1 and Step 2 (or Step 1 and the next sequential step). This applies to ALL flowcharts going forward.
 
 ## Arrow labels
 - Downward YES/NO labels: manual SvgText elements, offset 14px right of arrow shaft
@@ -38,6 +40,21 @@ alwaysApply: false
 - Defibrillate box: RED, not orange. Do not change this.
 - Critical transport destination callouts: red (destBg / destBorder / destText)
 - Callout box heights computed dynamically from text metrics, NEVER hardcoded
+
+## Font Size Standards
+- Source of truth: `components/protocols/SeizureFlowchart.tsx`
+- Step title: 17px / 700 weight
+- Step body text and bullets: 14px / 20px lineHeight
+- Drug subtitle (dose lines): 14px / 20px lineHeight / 600 weight
+- Step label ("Step N", "Option A"): 12px / 800 weight / letterSpacing 1
+- Section header text: 14px / 700 weight / letterSpacing 1.2
+- Caution/Excludes title labels: 13px / 800 weight
+- Caution/Excludes body text: 15px
+- Caution secondary/explanatory text: 13px
+- ScopeBadge text: 11px / 800 weight
+- SVG callout title text: 12px / 700 weight
+- SVG callout body text: 11px
+- These are minimum standards for legibility on phone viewports (Note 10+ tested at 6.8 inches). Do not go smaller. Larger may be appropriate for less dense protocols.
 
 ## Color tokens
 EMT:           bg #21262d   border #484f58   title #e6edf3   sub #8b949e
