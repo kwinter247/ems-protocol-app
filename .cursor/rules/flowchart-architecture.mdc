@@ -56,6 +56,16 @@ alwaysApply: false
 - SVG callout body text: 11px
 - These are minimum standards for legibility on phone viewports (Note 10+ tested at 6.8 inches). Do not go smaller. Larger may be appropriate for less dense protocols.
 
+## Callout vs Flow Content Hierarchy
+- Flow content (step boxes, drug boxes, decision diamonds, section headers) uses the standard v2 sizes already established.
+- Callout/contextual content (exclusions, cautions, side panels, embedded pathway breakdowns, abbreviation legends) uses these REDUCED sizes:
+  - Callout title labels (e.g. "EXCLUSIONS", "CAUTION"): 12px / 800 weight
+  - Callout body text: 13px
+  - Callout secondary/explanatory text: 12px
+  - Callout bullet text: 12px / 16px lineHeight
+- Color (orange/red borders, dark backgrounds) carries the visual emphasis. Size carries the hierarchy. Callouts use color to stand out, NOT size.
+- Reference: The bottom-of-flowchart TOR Exclusions box in `components/protocols/NonTraumaticTORFlowchart.tsx` is the correct visual treatment. The top-of-flowchart Exclusions box in `components/protocols/CardiacArrestShockableFlowchart.tsx` (currently too large) needs to match that smaller visual treatment.
+
 ## Color tokens
 EMT:           bg #21262d   border #484f58   title #e6edf3   sub #8b949e
 Paramedic:     bg #1b3a2d   border #0F6E56   title #56d364   sub #8fcca0

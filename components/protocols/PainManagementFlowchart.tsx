@@ -169,6 +169,9 @@ export default function PainManagementFlowchart() {
     const svgH = l.step6.bot + 20;
     const step2Mid = (l.step2.top + l.step2.bot) / 2;
     const ketMid = (l.optC.top + l.optC.bot) / 2;
+    const painCalloutH = 118;
+    const painCalloutTop = l.step2.top + 2;
+    const painCalloutMid = painCalloutTop + painCalloutH / 2;
 
     return (
       <Svg width={W} height={svgH} style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -187,30 +190,30 @@ export default function PainManagementFlowchart() {
         <Arrow x1={DCX} y1={l.optB.bot} x2={DCX} y2={l.optC.top} />
         <Arrow x1={DCX} y1={l.optC.bot} x2={DCX} y2={l.step6.top} />
 
-        <ConnLine x1={BX + NARROW_W} y1={step2Mid} x2={CALLOUT_X} y2={step2Mid} />
+        <ConnLine x1={BX + NARROW_W} y1={painCalloutMid} x2={CALLOUT_X} y2={painCalloutMid} />
         <Rect
           x={CALLOUT_X}
-          y={step2Mid - 72.5}
+          y={painCalloutTop}
           width={CALLOUT_W}
-          height={145}
+          height={painCalloutH}
           rx={6}
           fill={C.decBg}
           stroke={C.decBorder}
           strokeWidth={1.5}
         />
-        <SvgText x={CALLOUT_X + CALLOUT_W / 2} y={step2Mid - 45} fontSize={12} fill={C.decText} textAnchor="middle" fontWeight="700">
+        <SvgText x={CALLOUT_X + CALLOUT_W / 2} y={painCalloutTop + 20} fontSize={11} fill={C.decText} textAnchor="middle" fontWeight="700">
           Pain Scale by Age
         </SvgText>
-        <SvgText x={CALLOUT_X + 8} y={step2Mid - 22} fontSize={11} fill={C.emtTitle}>
+        <SvgText x={CALLOUT_X + 8} y={painCalloutTop + 40} fontSize={10.5} fill={C.emtTitle}>
           Age {'<'} 4 yrs: FLACC or CHEOPS
         </SvgText>
-        <SvgText x={CALLOUT_X + 8} y={step2Mid - 1} fontSize={11} fill={C.emtTitle}>
+        <SvgText x={CALLOUT_X + 8} y={painCalloutTop + 57} fontSize={10.5} fill={C.emtTitle}>
           Age 4–12 yrs: Faces Pain Scale-Revised
         </SvgText>
-        <SvgText x={CALLOUT_X + 8} y={step2Mid + 20} fontSize={11} fill={C.emtTitle}>
+        <SvgText x={CALLOUT_X + 8} y={painCalloutTop + 74} fontSize={10.5} fill={C.emtTitle}>
           or Wong-Baker Faces
         </SvgText>
-        <SvgText x={CALLOUT_X + 8} y={step2Mid + 41} fontSize={11} fill={C.emtTitle}>
+        <SvgText x={CALLOUT_X + 8} y={painCalloutTop + 91} fontSize={10.5} fill={C.emtTitle}>
           Age {'>'} 12 yrs: Numeric Rating Scale
         </SvgText>
 
@@ -451,20 +454,20 @@ const styles = StyleSheet.create({
   },
   warnTitle: {
     color: C.warnText,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 4,
   },
   warnBody: {
     color: C.emtTitle,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 18,
   },
   warnBodySub: {
     color: C.warnText,
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 12,
+    lineHeight: 17,
     marginTop: 4,
   },
   destBox: {
@@ -477,15 +480,15 @@ const styles = StyleSheet.create({
   },
   destTitle: {
     color: C.destSub,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 4,
   },
   destBody: {
     color: C.destText,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: '700',
   },
   stepBox: {

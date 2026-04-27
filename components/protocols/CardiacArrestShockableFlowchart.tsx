@@ -140,7 +140,7 @@ function calloutBox(
           key={i}
           x={CBX + CBW / 2}
           y={firstBaselineY + i * CALLOUT_LINE_H}
-          fontSize={9.5}
+          fontSize={11}
           fill={tc}
           textAnchor="middle"
           fontWeight="600"
@@ -184,7 +184,7 @@ function wideCalloutBox(
           key={i}
           x={CBX_D1 + CBW_D1 / 2}
           y={firstBaselineY + i * CALLOUT_LINE_H}
-          fontSize={9.5}
+          fontSize={11}
           fill={line.color}
           textAnchor="middle"
           fontWeight={line.weight}
@@ -631,9 +631,9 @@ export default function CardiacArrestShockableFlowchart() {
               Line 3: "If no response 8 min,"  (warn, orange)
               Line 4: "→ Step 4 (active BVM)"  (warn, orange, bold)        */}
         {(() => {
-          const titleSize = 14;
-          const subSize = 10;
-          const warnSize = 10;
+          const titleSize = 12;
+          const subSize = 11;
+          const warnSize = 11;
           const lineGap = 4;
           const padTop = 10;
           const padBot = 10;
@@ -1308,15 +1308,15 @@ const styles = StyleSheet.create({
   },
   warnTitle: {
     color: C.warnText,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 4,
   },
   warnBody: {
     color: C.label,
-    fontSize: 11,
-    lineHeight: 18,
+    fontSize: 12,
+    lineHeight: 16,
   },
 
   // Inline warning (inside step boxes)
@@ -1369,13 +1369,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   stepLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 2,
   },
   stepTitle: {
-    fontSize: 13,
+    fontSize: 17,
     fontWeight: '700',
     marginBottom: 4,
   },
@@ -1409,8 +1409,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   bullet: {
-    fontSize: 11,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
   // Scope badge (top-right corner of step boxes)
   scopeBadge: {
@@ -1420,7 +1420,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   scopeBadgeText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.8,
   },
@@ -1571,7 +1571,9 @@ const styles = StyleSheet.create({
   },
   drugSub: {
     color: C.critSub,
-    fontSize: 11,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
     marginBottom: 4,
   },
   drugSubHeader: {
@@ -1609,8 +1611,8 @@ const styles = StyleSheet.create({
   },
   doseText: {
     color: C.paraSub,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 14,
+    lineHeight: 20,
     flex: 1,
   },
 
@@ -1633,13 +1635,13 @@ const styles = StyleSheet.create({
   destTitle: {
     color: C.paraTitle,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
     marginBottom: 4,
   },
   destBullet: {
     color: C.paraSub,
-    fontSize: 11,
-    lineHeight: 18,
+    fontSize: 15,
+    lineHeight: 22,
   },
 
   // TOR jump-out sub-box — inside Step 10, references separate TOR protocol

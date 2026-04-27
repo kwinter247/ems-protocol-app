@@ -127,7 +127,7 @@ function wideCalloutBox(
           key={i}
           x={CBX_D1 + CBW_D1 / 2}
           y={firstBaselineY + i * CALLOUT_LINE_H}
-          fontSize={10.5}
+          fontSize={11}
           fill={line.color}
           textAnchor="middle"
           fontWeight={line.weight}
@@ -460,16 +460,15 @@ export default function NonTraumaticTORFlowchart() {
         onLayout={measure('excl')}
         style={[styles.warnBox, { marginHorizontal: BX }]}
       >
-        <Text style={[styles.warnTitle, { textAlign: 'center' }]}>EXCLUSIONS — DO NOT TERMINATE</Text>
-        <Text style={[styles.warnBody, { textAlign: 'center', color: C.emtTitle }]}>
-          Hypothermia · Lightning strike · Submersion / Drowning{'\n'}
-          Patients &lt; 18 years old
+        <Text style={[styles.torReminderTitle, { textAlign: 'center' }]}>EXCLUSIONS — DO NOT TERMINATE</Text>
+        <Text style={[styles.torReminderBody, { textAlign: 'center', color: C.emtTitle }]}>
+          Hypothermia · Lightning strike · Submersion / Drowning · Age &lt; 18
         </Text>
-        <Text style={[styles.warnBody, { textAlign: 'center' }]}>
-          Obvious/Apparent Death criteria → Obvious/Apparent Death protocol{'\n'}
+        <Text style={[styles.torReminderBody, { textAlign: 'center' }]}>
+          Obvious Death criteria → Obvious Death protocol{'\n'}
           Traumatic cardiac arrest → Traumatic Cardiac Arrest TOR
         </Text>
-        <Text style={[styles.warnBody, { marginTop: 6, color: C.destText, fontWeight: '700', textAlign: 'center' }]}>
+        <Text style={[styles.torReminderBody, { marginTop: 4, color: C.destText, fontWeight: '700', textAlign: 'center' }]}>
           Continue efforts OR contact OLMD for guidance.
         </Text>
       </View>
@@ -725,14 +724,14 @@ const styles = StyleSheet.create({
   },
   warnTitle: {
     color: C.warnText,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 4,
   },
   warnBody: {
     color: C.label,
-    fontSize: 11,
+    fontSize: 13,
     lineHeight: 18,
   },
 
@@ -766,19 +765,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   stepLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 2,
   },
   stepTitle: {
-    fontSize: 13,
+    fontSize: 17,
     fontWeight: '700',
     marginBottom: 4,
   },
   bullet: {
-    fontSize: 11,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
 
   // Scope badge
@@ -789,7 +788,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   scopeBadgeText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.8,
   },
@@ -833,8 +832,8 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   criteriaItem: {
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 13,
+    lineHeight: 18,
     marginBottom: 1,
   },
 
